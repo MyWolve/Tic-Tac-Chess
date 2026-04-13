@@ -1,6 +1,9 @@
 # Tic-Tac-Chess
 
-This project is inspired by this video on the Connect 4 state space (https://www.youtube.com/watch?v=i9pBeuBeupY&t=501s)
+This project is inspired by this video on the Connect 4 state space (https://www.youtube.com/watch?v=i9pBeuBeupY&t=501s).
+
+Update: He's solved it! (https://youtu.be/KaljD3Q3ct0?si=PEDpWkrTm9bgnV5n).
+
 The idea being that we can calculate and visualize 'weak' and 'strong' solutions to this game. 
 
 Tic-Tac-Chess is a small, modified, combination of both Tic-Tac-Toe and Chess and often referred to as "Tic-Tac-Chec" (https://www.bing.com/videos/riverview/relatedvideo?q=tic-tac-chess&mid=9325761329D683062C2B9325761329D683062C2B&FORM=VIRE)
