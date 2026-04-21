@@ -22,3 +22,6 @@ atleast 3 of their own pieces on the board.
 Captured pieces are removed from the board and may be played on subsequent turns to any empty square on the board. 
 
 The goal of Tic-Tac-Chess is to lay out your pieces so that they form 4 pieces in a row, column, or diagonal, just like in Tic-Tac-Toe. 
+
+CREDITS:
+Thank you to DANI MACCARI (@danimaccari - https://dani-maccari.itch.io/) for creating the pixel-art chess pieces used in this program. All rights belong to them and their license continues in this product. 
