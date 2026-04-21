@@ -21,20 +21,30 @@ Captured pieces are removed from the board and may be played on subsequent turns
 
 The goal of Tic-Tac-Chess is to lay out your pieces so that they form 4 pieces in a row, column, or diagonal, just like in Tic-Tac-Toe. 
 '''
+import pygame
 
-class Piece:
-    pass
+from data.classes.Board import Board
 
-class Pawn(Piece):
-    pass
+# pygame setup
+pygame.init()
 
-class Bishop(Piece):
-    pass
+WINDOW_SIZE = (1280, 720)
+screen = pygame.display.set_mode(WINDOW_SIZE)
 
-class Rook(Piece):
-    pass
+board = Board(WINDOW_SIZE[0], WINDOW_SIZE[1])
 
-class Knight(Piece):
-    pass
+def draw(display):
+    display.fill('white')
+    board.draw(display)
+    pygame.display.update()
+    
+if __name__ == "__main__":
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        draw(screen)
 
+pygame.quit()
 
