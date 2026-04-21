@@ -36,6 +36,7 @@ board = Board(WINDOW_SIZE[0], WINDOW_SIZE[1])
 def draw(display):
     display.fill('white')
     board.draw(display)
+    board.initialize_bench(display)
     pygame.display.update()
     
 if __name__ == "__main__":
