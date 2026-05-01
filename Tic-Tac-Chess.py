@@ -47,7 +47,6 @@ def draw_clear_board(display):
 if __name__ == "__main__":
     running = True
     left_bench, right_bench, display = draw_clear_board(screen)
-    print((board.squares[1].pos))
     while running:
 
         # Runs once at game_onset to fill both benches
@@ -61,10 +60,10 @@ if __name__ == "__main__":
             draw_clear_board(display)
             clear_board_flag = False
 
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+        
 
 pygame.quit()
-

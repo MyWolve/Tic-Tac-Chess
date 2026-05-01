@@ -11,7 +11,7 @@ class Square:
         self.abs_y = offset_y + y * height
         self.abs_pos = (self.abs_x, self.abs_y)
 
-        self.pos = self.get_coord()
+        self.pos = self.assign_coord()
         self.center = (self.abs_x + width // 2, self.abs_y + height // 2)
 
         self.color = 'light' if (x + y) % 2 == 0 else 'dark'
@@ -28,11 +28,11 @@ class Square:
             self.height
         )
 
-    def get_coord(self):
+    def assign_coord(self):
         columns = 'ABCD'
         return columns[self.x] + str(self.y + 1)
 
-    def draw(self, display):
+    def draw_squares(self, display):
         # configures if tile should be light or dark and draws it
         pygame.draw.rect(display, self.draw_color, self.rect)
     

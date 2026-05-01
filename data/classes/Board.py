@@ -23,7 +23,7 @@ class Board:
         self.offset_y = (height - board_pixel_h) // 2
 
         self.selected_piece = None
-        self.turn = 'white'
+        self.turn = 'W'
 
         # Bench positioning: one column of 4 slots on each side
         bench_gap = 50  # gap between bench and board edge
@@ -50,7 +50,7 @@ class Board:
     # draw checkerboard in screen center
     def draw_board(self, display):
         for square in self.squares:
-            square.draw(display)
+            square.draw_squares(display)
     
     def draw_bench(self, display):
         # draw bench slots (4 stacked vertically on each side)
@@ -78,23 +78,15 @@ class Board:
     # Initializes W_Piece and B_Piece objects and draws them on the board at GAME START
     def initialize_bench(self, board, left_bench, right_bench, display):
         # Iterate through each slot in left bench
-        W_Pawn = Pawn((left_bench.x, left_bench.y), "W", board)
-        W_Rook = Rook((left_bench.x, left_bench.y - self.tile_size), "W", board)
-        W_Knight = Knight((left_bench.x, left_bench.y - self.tile_size * 2), "W", board)
-        W_Bishop = Bishop((left_bench.x, left_bench.y - self.tile_size * 3), "W", board)
-        Pawn.draw(W_Pawn, display, board)
-        Rook.draw(W_Rook, display, board)
-        Knight.draw(W_Knight, display, board)
-        Bishop.draw(W_Bishop, display, board)
+        W_Pawn = Pawn((left_bench.x, left_bench.y), "W", board);                            W_Pawn.draw(display, board)
+        W_Rook = Rook((left_bench.x, left_bench.y - self.tile_size), "W", board);           W_Rook.draw(display, board)
+        W_Knight = Knight((left_bench.x, left_bench.y - self.tile_size * 2), "W", board);   W_Knight.draw(display,board)
+        W_Bishop = Bishop((left_bench.x, left_bench.y - self.tile_size * 3), "W", board);   W_Bishop.draw(display,board)
         # Iterate through each slot in right bench
-        B_Pawn = Pawn((right_bench.x, right_bench.y), "B", board)
-        B_Rook = Rook((right_bench.x, right_bench.y - self.tile_size), "B", board)
-        B_Knight = Knight((right_bench.x, right_bench.y - self.tile_size * 2), "B", board)
-        B_Bishop = Bishop((right_bench.x, right_bench.y - self.tile_size * 3), "B", board)
-        Pawn.draw(B_Pawn, display, board)
-        Rook.draw(B_Rook, display, board)
-        Knight.draw(B_Knight, display, board)
-        Bishop.draw(B_Bishop, display, board)
+        B_Pawn = Pawn((right_bench.x, right_bench.y), "B", board);                          B_Pawn.draw(display,board)
+        B_Rook = Rook((right_bench.x, right_bench.y - self.tile_size), "B", board);         B_Rook.draw(display,board)
+        B_Knight = Knight((right_bench.x, right_bench.y - self.tile_size * 2), "B", board); B_Knight.draw(display,board)
+        B_Bishop = Bishop((right_bench.x, right_bench.y - self.tile_size * 3), "B", board); B_Bishop.draw(display,board)
 
         # Add pieces to global inventory
         self.pieces.extend([W_Pawn, W_Rook, W_Knight, W_Bishop, B_Pawn, B_Rook, B_Knight, B_Bishop])
@@ -113,8 +105,10 @@ class Board:
     # Test function as above BUT with new square.pos
     def draw_piece_test_fillBoard_NEW(self, display, board):
         for square in board.squares:
-            W_Pawn = Pawn((self.get_coords(square.pos)[0], self.get_coords(square.pos)[1]), "W", board)
-            Pawn.draw(W_Pawn, display, board)
+            coords = self.get_coords(square.pos)
+            if coords:
+                W_Pawn = Pawn((coords[0], coords[1]), "W", board)
+                Pawn.draw(W_Pawn, display, board)
 
     # Get hard-coded coordinate for each grid-square.
     """
@@ -130,4 +124,7 @@ class Board:
             "C1": (640,72), "C2": (640,216), "C3": (640,360), "C4": (640,504),
             "D1": (784,72), "D2": (784,216), "D3": (784,360), "D4": (784,504)
         }
-        return coordinates[gridSquare][0], coordinates[gridSquare][1]        
+        try:
+            return coordinates[gridSquare][0], coordinates[gridSquare][1]        
+        except KeyError:
+            print("ERROR: Grid square must be a valid move. ([A-D][1-4])")

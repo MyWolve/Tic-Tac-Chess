@@ -8,10 +8,5 @@ class Knight(Piece):
         img_path = "data/imgs/" + color[0] + "_Knight.png"
         self.name = color[0] + "_Knight"
         self.img = pygame.image.load(img_path)
-        # self.img = pygame.transform.scale(self.img, (board.tile_width - 16, board.tile_height - 16))
         self.img = pygame.transform.scale2x(self.img)
     
-    def draw(self, display, board):
-        slot_center = (self.x + board.tile_size // 2, self.y + board.tile_size // 2)                                                                                                                                     
-        img_rect = self.img.get_rect(center=slot_center)                                                                                                                                                                 
-        display.blit(self.img, img_rect)
