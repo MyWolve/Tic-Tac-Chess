@@ -1,7 +1,6 @@
 import pygame 
 
 from .Square import Square
-from .pieces.Piece import Piece
 from .pieces.Pawn import Pawn
 from .pieces.Rook import Rook
 from .pieces.Knight import Knight
@@ -25,7 +24,6 @@ class Board:
 
         self.selected_piece = None
         self.turn = 'white'
-
 
         # Bench positioning: one column of 4 slots on each side
         bench_gap = 50  # gap between bench and board edge
@@ -51,6 +49,8 @@ class Board:
         # draw checkerboard in screen center
         for square in self.squares:
             square.draw(display)
+    
+    def draw_bench(self, display):
         # draw bench slots (4 stacked vertically on each side)
         bench_color = (180, 170, 160)
         bench_border_color = (100, 100, 100)
@@ -74,10 +74,9 @@ class Board:
         return left_rect, right_rect
     
     def initialize_bench(self, board, left_bench, right_bench, display):
+        print(left_bench.x) # Test print
+        print(right_bench.x) # Test print
         # Iterate through each slot in left bench
-        # Place one of the 4 pieces in that slot
-        print(left_bench.x)
-        print(right_bench.x)
         W_Pawn = Pawn((left_bench.x, left_bench.y), "W", board)
         W_Rook = Rook((left_bench.x, left_bench.y - self.tile_size), "W", board)
         W_Knight = Knight((left_bench.x, left_bench.y - self.tile_size * 2), "W", board)
@@ -86,6 +85,7 @@ class Board:
         Rook.draw(W_Rook, display, board)
         Knight.draw(W_Knight, display, board)
         Bishop.draw(W_Bishop, display, board)
+        # Iterate through each slot in right bench
         B_Pawn = Pawn((right_bench.x, right_bench.y), "B", board)
         B_Rook = Rook((right_bench.x, right_bench.y - self.tile_size), "B", board)
         B_Knight = Knight((right_bench.x, right_bench.y - self.tile_size * 2), "B", board)
@@ -94,6 +94,5 @@ class Board:
         Rook.draw(B_Rook, display, board)
         Knight.draw(B_Knight, display, board)
         Bishop.draw(B_Bishop, display, board)
+        # Add pieces to global inventory
         self.pieces.extend([W_Pawn, W_Rook, W_Knight, W_Bishop, B_Pawn, B_Rook, B_Knight, B_Bishop])
-        #Iterate through each slot in the right bench
-         # Place one of the 4 pieces in that slot
