@@ -35,12 +35,14 @@ board = Board(WINDOW_SIZE[0], WINDOW_SIZE[1])
 
 initialize_bench_flag = True
 
+
 def draw_clear_board(display):
     display.fill((40, 42, 54))
     board.draw_board(display)
     left_bench, right_bench = board.draw_bench(display)
     pygame.display.update()
     return left_bench, right_bench, display
+
 if __name__ == "__main__":
     running = True
     left_bench, right_bench, display = draw_clear_board(screen)

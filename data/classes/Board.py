@@ -96,3 +96,22 @@ class Board:
         Bishop.draw(B_Bishop, display, board)
         # Add pieces to global inventory
         self.pieces.extend([W_Pawn, W_Rook, W_Knight, W_Bishop, B_Pawn, B_Rook, B_Knight, B_Bishop])
+
+        # self.draw_piece_test_fillBoard(display, board)
+
+    def draw_piece_test_fillBoard(self, display, board):
+        column_letter = ['A', 'B', 'C', 'D']
+        for column in range(4):
+            for row in range(1,5):
+                W_Pawn = Pawn((self.get_coords(column_letter[column] + str(row))), "W", board)
+                Pawn.draw(W_Pawn, display, board)
+
+
+    def get_coords(self, gridSquare):
+        coordinates = {
+            "A1": (352,72), "A2": (352,216), "A3": (352,360), "A4": (352,504),
+            "B1": (496,72), "B2": (496,216), "B3": (496,360), "B4": (496,504),
+            "C1": (640,72), "C2": (640,216), "C3": (640,360), "C4": (640,504),
+            "D1": (784,72), "D2": (784,216), "D3": (784,360), "D4": (784,504)
+        }
+        return coordinates[gridSquare][0], coordinates[gridSquare][1]
