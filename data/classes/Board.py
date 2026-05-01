@@ -32,7 +32,9 @@ class Board:
         self.right_bench_x = self.offset_x + board_pixel_w + bench_gap
         self.bench_y = self.offset_y  # align top of bench with top of board
         
+        # I'm confusing myself, I'm not sure if this is even needed -- Surely an easier way? 
         self.squares = self.generate_squares()
+        # List points to each Piece() object created so we can manipulate them
         self.pieces = []
 
     def generate_squares(self):
@@ -44,9 +46,9 @@ class Board:
                            self.offset_x, self.offset_y)
                 )
         return output
-
+    
+    # draw checkerboard in screen center
     def draw_board(self, display):
-        # draw checkerboard in screen center
         for square in self.squares:
             square.draw(display)
     
@@ -73,9 +75,8 @@ class Board:
         
         return left_rect, right_rect
     
+    # Initializes W_Piece and B_Piece objects and draws them on the board at GAME START
     def initialize_bench(self, board, left_bench, right_bench, display):
-        print(left_bench.x) # Test print
-        print(right_bench.x) # Test print
         # Iterate through each slot in left bench
         W_Pawn = Pawn((left_bench.x, left_bench.y), "W", board)
         W_Rook = Rook((left_bench.x, left_bench.y - self.tile_size), "W", board)
@@ -94,11 +95,14 @@ class Board:
         Rook.draw(B_Rook, display, board)
         Knight.draw(B_Knight, display, board)
         Bishop.draw(B_Bishop, display, board)
+
         # Add pieces to global inventory
         self.pieces.extend([W_Pawn, W_Rook, W_Knight, W_Bishop, B_Pawn, B_Rook, B_Knight, B_Bishop])
 
         # self.draw_piece_test_fillBoard(display, board)
+        # self.draw_piece_test_fillBoard_NEW(display, board)
 
+    # Test function for get_coords()
     def draw_piece_test_fillBoard(self, display, board):
         column_letter = ['A', 'B', 'C', 'D']
         for column in range(4):
@@ -106,7 +110,19 @@ class Board:
                 W_Pawn = Pawn((self.get_coords(column_letter[column] + str(row))), "W", board)
                 Pawn.draw(W_Pawn, display, board)
 
+    # Test function as above BUT with new square.pos
+    def draw_piece_test_fillBoard_NEW(self, display, board):
+        for square in board.squares:
+            W_Pawn = Pawn((self.get_coords(square.pos)[0], self.get_coords(square.pos)[1]), "W", board)
+            Pawn.draw(W_Pawn, display, board)
 
+    # Get hard-coded coordinate for each grid-square.
+    """
+    |A1|B1|C1|D1|
+    |A2|B2|C2|D2|
+    |A3|B3|C3|D3|
+    |A4|B4|C4|D4|
+    """
     def get_coords(self, gridSquare):
         coordinates = {
             "A1": (352,72), "A2": (352,216), "A3": (352,360), "A4": (352,504),
@@ -114,4 +130,4 @@ class Board:
             "C1": (640,72), "C2": (640,216), "C3": (640,360), "C4": (640,504),
             "D1": (784,72), "D2": (784,216), "D3": (784,360), "D4": (784,504)
         }
-        return coordinates[gridSquare][0], coordinates[gridSquare][1]
+        return coordinates[gridSquare][0], coordinates[gridSquare][1]        
