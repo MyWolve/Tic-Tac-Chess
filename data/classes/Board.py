@@ -1,6 +1,11 @@
 import pygame 
 
 from .Square import Square
+from .pieces.Piece import Piece
+from .pieces.Pawn import Pawn
+from .pieces.Rook import Rook
+from .pieces.Knight import Knight
+from .pieces.Bishop import Bishop
 
 class Board:
     def __init__(self, width, height):
@@ -21,6 +26,7 @@ class Board:
         self.selected_piece = None
         self.turn = 'white'
 
+
         # Bench positioning: one column of 4 slots on each side
         bench_gap = 50  # gap between bench and board edge
         self.bench_slot_size = self.tile_size
@@ -29,6 +35,7 @@ class Board:
         self.bench_y = self.offset_y  # align top of bench with top of board
         
         self.squares = self.generate_squares()
+        self.pieces = []
 
     def generate_squares(self):
         output = []
@@ -40,7 +47,7 @@ class Board:
                 )
         return output
 
-    def draw(self, display):
+    def draw_board(self, display):
         # draw checkerboard in screen center
         for square in self.squares:
             square.draw(display)
@@ -63,6 +70,30 @@ class Board:
             )
             pygame.draw.rect(display, bench_color, right_rect)
             pygame.draw.rect(display, bench_border_color, right_rect, 2)
+        
+        return left_rect, right_rect
     
-    def initialize(self, display):
-        pass
+    def initialize_bench(self, board, left_bench, right_bench, display):
+        # Iterate through each slot in left bench
+        # Place one of the 4 pieces in that slot
+        print(left_bench.x)
+        print(right_bench.x)
+        W_Pawn = Pawn((left_bench.x, left_bench.y), "W", board)
+        W_Rook = Rook((left_bench.x, left_bench.y - self.tile_size), "W", board)
+        W_Knight = Knight((left_bench.x, left_bench.y - self.tile_size * 2), "W", board)
+        W_Bishop = Bishop((left_bench.x, left_bench.y - self.tile_size * 3), "W", board)
+        Pawn.draw(W_Pawn, display, board)
+        Rook.draw(W_Rook, display, board)
+        Knight.draw(W_Knight, display, board)
+        Bishop.draw(W_Bishop, display, board)
+        B_Pawn = Pawn((right_bench.x, right_bench.y), "B", board)
+        B_Rook = Rook((right_bench.x, right_bench.y - self.tile_size), "B", board)
+        B_Knight = Knight((right_bench.x, right_bench.y - self.tile_size * 2), "B", board)
+        B_Bishop = Bishop((right_bench.x, right_bench.y - self.tile_size * 3), "B", board)
+        Pawn.draw(B_Pawn, display, board)
+        Rook.draw(B_Rook, display, board)
+        Knight.draw(B_Knight, display, board)
+        Bishop.draw(B_Bishop, display, board)
+        self.pieces.extend([W_Pawn, W_Rook, W_Knight, W_Bishop, B_Pawn, B_Rook, B_Knight, B_Bishop])
+        #Iterate through each slot in the right bench
+         # Place one of the 4 pieces in that slot

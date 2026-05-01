@@ -35,17 +35,17 @@ board = Board(WINDOW_SIZE[0], WINDOW_SIZE[1])
 
 def draw(display):
     display.fill('white')
-    board.draw(display)
-    board.initialize_bench(display)
+    left_bench, right_bench = board.draw_board(display)
+    board.initialize_bench(board, left_bench, right_bench, display)
     pygame.display.update()
     
 if __name__ == "__main__":
     running = True
+    draw(screen)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        draw(screen)
 
 pygame.quit()
 
