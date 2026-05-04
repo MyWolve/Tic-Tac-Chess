@@ -33,9 +33,6 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 
 board = Board(WINDOW_SIZE[0], WINDOW_SIZE[1])
 
-initialize_bench_flag = True
-clear_board_flag = False
-
 # Resets the screen and draws an empty board and benches
 def draw_clear_board(display):
     display.fill((40, 42, 54))
@@ -50,16 +47,21 @@ if __name__ == "__main__":
     while running:
 
         # Runs once at game_onset to fill both benches
-        if initialize_bench_flag:
+        if board.initialize_bench_flag:
             board.initialize_bench(board, left_bench, right_bench, display)
             pygame.display.update()
-            initialize_bench_flag = False
+            board.initialize_bench_flag = False
+        
+        board.pieces[0].move(display, board, "A2")
 
-        # Clears board --- enabled whenever a piece needs to be redrawn (moved, etc.)
-        if clear_board_flag:
+        # Clears board and redraws all pieces whenever a piece has moved
+        if board.clear_board_flag:
             draw_clear_board(display)
-            clear_board_flag = False
+            board.draw_pieces(board, display)
+            pygame.display.update()
+            board.clear_board_flag = False
 
+        input("Press enter to continue...")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

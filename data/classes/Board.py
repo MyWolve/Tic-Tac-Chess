@@ -37,6 +37,11 @@ class Board:
         # List points to each Piece() object created so we can manipulate them
         self.pieces = []
 
+        # GAME STATE FLAGS
+        self.initialize_bench_flag = True
+        self.clear_board_flag = False
+        self.redraw_board_flag = False
+
     def generate_squares(self):
         output = []
         for y in range(4):
@@ -93,7 +98,11 @@ class Board:
 
         # self.draw_piece_test_fillBoard(display, board)
         # self.draw_piece_test_fillBoard_NEW(display, board)
-
+    
+    def draw_pieces(self, board, display):
+        for piece in board.pieces:
+            piece.draw(display,board)
+            
     # Test function for get_coords()
     def draw_piece_test_fillBoard(self, display, board):
         column_letter = ['A', 'B', 'C', 'D']
