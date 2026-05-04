@@ -52,20 +52,21 @@ if __name__ == "__main__":
             pygame.display.update()
             board.initialize_bench_flag = False
         
-        board.pieces[0].move(display, board, "A2")
-
         # Clears board and redraws all pieces whenever a piece has moved
         if board.clear_board_flag:
             draw_clear_board(display)
-            board.draw_pieces(board, display)
+            board.draw_pieces(display)
             pygame.display.update()
             board.clear_board_flag = False
-
-        input("Press enter to continue...")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: # Left mouse button
+                    mouse_pos = pygame.mouse.get_pos()
+                    board.get_piece_at(mouse_pos)
+                    board.get_square_at(mouse_pos)
         
 
 pygame.quit()

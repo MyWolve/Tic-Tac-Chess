@@ -15,13 +15,18 @@ class Piece:
             img_rect = self.img.get_rect(center=slot_center)                                                                                                                                                                 
             display.blit(self.img, img_rect)
     
-    def move(self, display, board, destination_square):
+    def move(self, board, destination_square):
         if self.color == board.turn and self.is_valid_move:
             coords = board.get_coords(destination_square)
             if not coords:
                 return 1  # board.get_coords() threw a KeyError
             self.pos = coords
             board.clear_board_flag = True
+
+            # Update square with occupying piece
+            for square in board.squares:
+                 if square.pos == destination_square:
+                      square.occupying_piece = self
         else:
             print("Error: Not a Valid Move!")
             return 1

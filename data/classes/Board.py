@@ -99,9 +99,9 @@ class Board:
         # self.draw_piece_test_fillBoard(display, board)
         # self.draw_piece_test_fillBoard_NEW(display, board)
     
-    def draw_pieces(self, board, display):
-        for piece in board.pieces:
-            piece.draw(display,board)
+    def draw_pieces(self, display):
+        for piece in self.pieces:
+            piece.draw(display,self)
             
     # Test function for get_coords()
     def draw_piece_test_fillBoard(self, display, board):
@@ -137,3 +137,20 @@ class Board:
             return coordinates[gridSquare][0], coordinates[gridSquare][1]        
         except KeyError:
             print("ERROR: Grid square must be a valid move. ([A-D][1-4])")
+    
+    def get_piece_at(self, mouse_pos):
+        for piece in self.pieces:
+            if (piece.pos[0] <= mouse_pos[0] < piece.pos[0] + self.tile_size and
+                    piece.pos[1] <= mouse_pos[1] < piece.pos[1] + self.tile_size):
+                print(str(piece) + " @ " + str(piece.pos))
+                return piece
+        return None
+    
+    def get_square_at(self, mouse_pos):
+        for square in self.squares:
+            coords = self.get_coords(square.pos)
+            if (coords[0] <= mouse_pos[0] < coords[0] + square.width and
+                    coords[1] <= mouse_pos[1] < coords[1] + square.height):
+                print(str(mouse_pos) + " is within square " + square.pos)
+                return square
+        return None
