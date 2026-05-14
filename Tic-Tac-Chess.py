@@ -51,6 +51,9 @@ if __name__ == "__main__":
             board.initialize_bench(board, left_bench, right_bench, display)
             pygame.display.update()
             board.initialize_bench_flag = False
+
+            board.pieces[0].move(board, "D1")
+            board.pieces[4].move(board, "A2")
         
         # Clears board and redraws all pieces whenever a piece has moved
         if board.clear_board_flag:
@@ -68,7 +71,8 @@ if __name__ == "__main__":
                     board.selected_piece = board.get_piece_at(mouse_pos)
                     if board.selected_piece:
                         board.highlight_square(display)
-                        pygame.display.update()                        
+                        pygame.display.update()
+                        
 
 
 pygame.quit()

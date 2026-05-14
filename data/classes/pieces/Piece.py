@@ -18,7 +18,8 @@ class Piece:
             display.blit(self.img, img_rect)
     
     def move(self, board, destination_square):
-        if self.COLOR == board.turn:
+        self.get_valid_moves(board)
+        if self.COLOR == board.turn and self.is_valid_move(destination_square):
             coords = board.get_coords(destination_square)
             if not coords:
                 return 1  # board.get_coords() threw a KeyError
@@ -32,6 +33,12 @@ class Piece:
             for square in board.squares:
                  if square.pos == destination_square:
                       square.occupying_piece = self
+            
+            # Advance turn
+            board.turn = 'B' if board.turn == 'W' else 'W'
+
+            # Clear valid moves
+            self.valid_moves = []
         else:
             print("Error: Not a Valid Move!")
             return 1
@@ -40,6 +47,12 @@ class Piece:
          self.pos = self.bench_pos
         
     # Overwritten by Children for specific Piece implementations
-    def get_valid_moves(self):
+    def get_valid_moves(self, board):
          pass
+
+    def is_valid_move(self, destination_square):
+        if destination_square in self.valid_moves:
+            return True
+        else:
+            return False
          
