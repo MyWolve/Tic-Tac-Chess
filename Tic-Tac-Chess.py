@@ -65,8 +65,10 @@ if __name__ == "__main__":
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: # Left mouse button
                     mouse_pos = pygame.mouse.get_pos()
-                    board.get_piece_at(mouse_pos)
-                    board.get_square_at(mouse_pos)
-        
+                    board.selected_piece = board.get_piece_at(mouse_pos)
+                    if board.selected_piece:
+                        board.highlight_square(display)
+                        pygame.display.update()                        
+
 
 pygame.quit()

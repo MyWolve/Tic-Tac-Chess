@@ -9,3 +9,25 @@ class Pawn(Piece):
         self.name = color[0] + "_Pawn"
         self.img = pygame.image.load(img_path)
         self.img = pygame.transform.scale2x(self.img)
+
+        self.reverse = False
+    
+    def is_at_edge(self, board):
+        if not self.on_bench and board.get_grid_name(self.pos)[0] == 'D':
+            self.reverse = True
+        elif not self.on_bench and board.get_grid_name(self.pos)[0] == 'A':
+            self.reverse = False
+        else:
+            pass
+    
+    def get_valid_moves(self, board):
+        if self.on_bench:
+            print("You're on the bench! How did you get here?")
+        else:
+            self.is_at_edge(board)
+            if not self.reverse:
+                move = str(chr(ord(board.get_grid_name(self.pos)[0]) + 1) + board.get_grid_name(self.pos)[1])
+                self.valid_moves.append(move)
+            else:
+                move = str(chr(ord(board.get_grid_name(self.pos)[0]) - 1) + board.get_grid_name(self.pos)[1])
+                self.valid_moves.append(move)
