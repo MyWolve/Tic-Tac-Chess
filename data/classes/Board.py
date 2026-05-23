@@ -159,19 +159,26 @@ class Board:
                 return piece
         return None
     
-    # Returns the Square object at a location given by mouse_pos
+    # Returns the pos string of the clicked area: "A1"-"D4" for board squares,
+    # "left_bench_N" / "right_bench_N" for bench slots, or None for a miss.
     def get_square_at(self, mouse_pos):
         for square in self.squares:
             coords = self.get_coords(square.pos)
             if coords and (coords[0] <= mouse_pos[0] < coords[0] + square.width and
                     coords[1] <= mouse_pos[1] < coords[1] + square.height):
-                print(str(mouse_pos) + " is within square " + square.pos)
-                return square
+                return square.pos
+        for i in range(4):
+            slot_y = self.bench_y + i * self.bench_slot_size
+            if (self.left_bench_x <= mouse_pos[0] < self.left_bench_x + self.bench_slot_size and
+                    slot_y <= mouse_pos[1] < slot_y + self.bench_slot_size):
+                return f"left_bench_{i}"
+            if (self.right_bench_x <= mouse_pos[0] < self.right_bench_x + self.bench_slot_size and
+                    slot_y <= mouse_pos[1] < slot_y + self.bench_slot_size):
+                return f"right_bench_{i}"
         return None
     
     def highlight_square(self, display):
         p = self.selected_piece
-        self.selected_piece = None
         if not p:
             return
         highlight_rect = pygame.Rect(p.pos[0], p.pos[1], self.tile_size, self.tile_size)

@@ -36,6 +36,7 @@ class Piece:
             
             # Advance turn
             board.turn = 'B' if board.turn == 'W' else 'W'
+            print("It is %s's turn!" % board.turn)
 
             # Clear valid moves
             self.valid_moves = []
@@ -51,7 +52,7 @@ class Piece:
          pass
 
     def is_valid_move(self, destination_square):
-        if destination_square in self.valid_moves:
+        if destination_square in self.valid_moves or self.on_bench:
             return True
         else:
             return False

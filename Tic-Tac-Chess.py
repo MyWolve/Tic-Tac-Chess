@@ -51,9 +51,6 @@ if __name__ == "__main__":
             board.initialize_bench(board, left_bench, right_bench, display)
             pygame.display.update()
             board.initialize_bench_flag = False
-
-            board.pieces[0].move(board, "D1")
-            board.pieces[4].move(board, "A2")
         
         # Clears board and redraws all pieces whenever a piece has moved
         if board.clear_board_flag:
@@ -68,13 +65,19 @@ if __name__ == "__main__":
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: # Left mouse button
                     mouse_pos = pygame.mouse.get_pos()
+                    selected_square = board.get_square_at(mouse_pos)
+
                     if board.selected_piece:
-                        print("Hey, you're clicking for a second time!")
-                        if board.get_coords(board.get_square_at(mouse_pos)) in board.selected_piece.valid_moves:
-                            print("Hey, that's a valid move for %s", board.selected_piece)
-                    board.selected_piece = board.get_piece_at(mouse_pos)
-                    if board.selected_piece:
-                        board.highlight_square(display)
-                        pygame.display.update()
+                        p = board.selected_piece
+                        board.selected_piece = None
+                        is_board_square = selected_square is not None and not selected_square.startswith("bench")
+                        is_valid = is_board_square and (p.on_bench or selected_square in p.valid_moves)
+                        if not is_valid or p.move(board, selected_square):
+                            board.clear_board_flag = True
+                    else:
+                        board.selected_piece = board.get_piece_at(mouse_pos)
+                        if board.selected_piece:
+                            board.highlight_square(display)
+                            pygame.display.update()
                         
 pygame.quit()
