@@ -19,4 +19,19 @@ class Bishop(Piece):
                 for r in rows:
                     self.valid_moves.append(c + r)
         else:
-            pass
+            grid_name = board.get_grid_name(self.pos)
+            col = ord(grid_name[0]) - ord('A')
+            row = int(grid_name[1]) - 1
+
+            for dc, dr in [(1,1),(1,-1),(-1,1),(-1,-1)]:
+                c, r = col + dc, row + dr
+                while 0 <= c < 4 and 0 <= r < 4:
+                    name = chr(ord('A') + c) + str(r + 1)
+                    target = next((s for s in board.squares if s.pos == name), None)
+                    if target and target.occupying_piece:
+                        if target.occupying_piece.COLOR != self.COLOR:
+                            self.valid_moves.append(name)
+                        break
+                    self.valid_moves.append(name)
+                    c += dc
+                    r += dr

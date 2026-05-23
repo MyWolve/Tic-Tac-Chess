@@ -24,7 +24,7 @@ class Piece:
             dest_square = next((s for s in board.squares if s.pos == destination_square), None)
             if not dest_square:
                 return 1
-
+            
             if dest_square.occupying_piece and not self.on_bench:
                 self.capture(dest_square)
 
