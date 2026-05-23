@@ -68,11 +68,13 @@ if __name__ == "__main__":
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: # Left mouse button
                     mouse_pos = pygame.mouse.get_pos()
+                    if board.selected_piece:
+                        print("Hey, you're clicking for a second time!")
+                        if board.get_coords(board.get_square_at(mouse_pos)) in board.selected_piece.valid_moves:
+                            print("Hey, that's a valid move for %s", board.selected_piece)
                     board.selected_piece = board.get_piece_at(mouse_pos)
                     if board.selected_piece:
                         board.highlight_square(display)
                         pygame.display.update()
                         
-
-
 pygame.quit()

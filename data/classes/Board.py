@@ -1,6 +1,7 @@
 import pygame 
 
 from .Square import Square
+from .pieces.Piece import Piece
 from .pieces.Pawn import Pawn
 from .pieces.Rook import Rook
 from .pieces.Knight import Knight
@@ -22,7 +23,7 @@ class Board:
         self.offset_x = (width - board_pixel_w) // 2
         self.offset_y = (height - board_pixel_h) // 2
 
-        self.selected_piece = None
+        self.selected_piece: Piece | None = None
         self.turn = 'W'
 
         # Bench positioning: one column of 4 slots on each side
@@ -162,26 +163,34 @@ class Board:
     def get_square_at(self, mouse_pos):
         for square in self.squares:
             coords = self.get_coords(square.pos)
-            if (coords[0] <= mouse_pos[0] < coords[0] + square.width and
+            if coords and (coords[0] <= mouse_pos[0] < coords[0] + square.width and
                     coords[1] <= mouse_pos[1] < coords[1] + square.height):
                 print(str(mouse_pos) + " is within square " + square.pos)
                 return square
         return None
     
     def highlight_square(self, display):
-        # Draw a highlighted barrier around the selected piece
         p = self.selected_piece
+        self.selected_piece = None
+        if not p:
+            return
         highlight_rect = pygame.Rect(p.pos[0], p.pos[1], self.tile_size, self.tile_size)
         pygame.draw.rect(display, (100, 249, 83), highlight_rect, 3) # 3px border
-        # If p.on_bench, all destinations are valid!
+        
+        # If p.on_bench, all destinations are valid! (except for occupied squares)
         if p.on_bench:
             print("I'm on the bench!")
             for square in self.squares:
-                highlight_square_rect = pygame.Rect(square.abs_x, square.abs_y, self.tile_size, self.tile_size)
-                pygame.draw.rect(display, (215, 10, 245), highlight_square_rect, 3)
+                if square.occupying_piece == None:
+                    highlight_square_rect = pygame.Rect(square.abs_x, square.abs_y, self.tile_size, self.tile_size)
+                    pygame.draw.rect(display, (215, 10, 245), highlight_square_rect, 3)
+
         # If p is not on bench, run p.get_valid_moves() and only highlight those squares
         else:
             p.get_valid_moves(self)
             for move in p.valid_moves:
-                highlight_square_rect = pygame.Rect(self.get_coords(move)[0], self.get_coords(move)[1], self.tile_size, self.tile_size)
+                coords = self.get_coords(move)
+                if not coords:
+                    continue
+                highlight_square_rect = pygame.Rect(coords[0], coords[1], self.tile_size, self.tile_size)
                 pygame.draw.rect(display, (215, 10, 245), highlight_square_rect, 3)

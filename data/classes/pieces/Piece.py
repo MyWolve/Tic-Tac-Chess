@@ -6,15 +6,15 @@ class Piece:
         self.COLOR = color
         self.on_bench = True
         self.bench_pos = pos
-        self.IMG = pygame.image.load("data/imgs/W_Queen.png")
+        self.img = pygame.image.load("data/imgs/W_Queen.png")
 
         # Will implement function later
-        self.valid_moves = []
+        self.valid_moves: list[str] = []
 
 
     def draw(self, display, board):
             slot_center = (self.pos[0] + board.tile_size // 2, self.pos[1] + board.tile_size // 2)                                                                                                                                     
-            img_rect = self.IMG.get_rect(center=slot_center)                                                                                                                                                                 
+            img_rect = self.img.get_rect(center=slot_center)                                                                                                                                                                 
             display.blit(self.img, img_rect)
     
     def move(self, board, destination_square):
