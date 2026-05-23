@@ -22,6 +22,7 @@ class Pawn(Piece):
             pass
     
     def get_valid_moves(self, board):
+        self.valid_moves = []
         if self.on_bench:
             columns = 'ABCD'
             rows = '1234'

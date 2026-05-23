@@ -18,42 +18,68 @@ class Piece:
             display.blit(self.img, img_rect)
     
     def move(self, board, destination_square):
+        self.valid_moves = []
         self.get_valid_moves(board)
-        if self.COLOR == board.turn and self.is_valid_move(destination_square):
+        if self.COLOR == board.turn and self.is_valid_move(board, destination_square):
+            dest_square = next((s for s in board.squares if s.pos == destination_square), None)
+            if not dest_square:
+                return 1
+
+            if dest_square.occupying_piece and not self.on_bench:
+                self.capture(dest_square)
+
             coords = board.get_coords(destination_square)
             if not coords:
-                return 1  # board.get_coords() threw a KeyError
+                return 1
+
+            # Clear source square before moving
+            for s in board.squares:
+                if s.occupying_piece is self:
+                    s.occupying_piece = None
+
             self.pos = coords
-            board.clear_board_flag = True
-
-            # Update Piece
             self.on_bench = False
-
-            # Update square with occupying piece
-            for square in board.squares:
-                 if square.pos == destination_square:
-                      square.occupying_piece = self
-            
-            # Advance turn
+            dest_square.occupying_piece = self
+            board.clear_board_flag = True
             board.turn = 'B' if board.turn == 'W' else 'W'
             print("It is %s's turn!" % board.turn)
-
-            # Clear valid moves
             self.valid_moves = []
         else:
             print("Error: Not a Valid Move!")
             return 1
     
-    def bench(self, board):
+    def capture(self, destination_square):
+        try: 
+            destination_square.occupying_piece.bench()
+            destination_square.occupying_piece = None
+        except AttributeError:
+            print("You passed me an empty square, you bastard!")
+            return 1
+        
+    def bench(self):
          self.pos = self.bench_pos
+         self.on_bench = True
         
     # Overwritten by Children for specific Piece implementations
     def get_valid_moves(self, board):
          pass
 
-    def is_valid_move(self, destination_square):
-        if destination_square in self.valid_moves or self.on_bench:
-            return True
+    def is_valid_move(self, board, destination_square):
+        for square in board.squares:
+            if square.pos == destination_square:
+                #if square.occupying_piece:
+                occSquare = square
+        if destination_square in self.valid_moves:
+            if self.on_bench:
+                if occSquare.occupying_piece:
+                    return False
+                else:
+                    return True
+            else:
+                if occSquare.occupying_piece and occSquare.occupying_piece.COLOR == self.COLOR:
+                    return False
+                else:
+                    return True
         else:
             return False
          
