@@ -25,3 +25,7 @@ The goal of Tic-Tac-Chess is to lay out your pieces so that they form 4 pieces i
 
 CREDITS:
 Thank you to DANI MACCARI (@danimaccari - https://dani-maccari.itch.io/) for creating the pixel-art chess pieces used in this program. All rights belong to them and their license continues in this product. 
+
+COMPONENT PROGRESS:
+    - ***Main game functionality*** :)
+    - Solution Graph
