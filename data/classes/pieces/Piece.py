@@ -37,9 +37,17 @@ class Piece:
                 if s.occupying_piece is self:
                     s.occupying_piece = None
 
+            deploying_from_bench = self.on_bench
             self.pos = coords
             self.on_bench = False
             dest_square.occupying_piece = self
+
+            if deploying_from_bench:
+                board.pieces_deployed[self.COLOR] += 1
+                if len(board.deployed_pieces[self.COLOR]) < 3:
+                    board.deployed_pieces[self.COLOR].append(self)
+                if board.pieces_deployed[self.COLOR] >= 3:
+                    board.can_capture[self.COLOR] = True
             board.clear_board_flag = True
             board.turn = 'B' if board.turn == 'W' else 'W'
             print("It is %s's turn!" % board.turn)
@@ -78,8 +86,9 @@ class Piece:
             else:
                 if occSquare.occupying_piece and occSquare.occupying_piece.COLOR == self.COLOR:
                     return False
-                else:
-                    return True
+                if occSquare.occupying_piece and not board.can_capture[self.COLOR]:
+                    return False
+                return True
         else:
             return False
          

@@ -44,6 +44,21 @@ class Board:
         # Saves board space to matrix to check for winners
         self.board_space = np.zeros((4,4))
 
+        # Tracks whether or not players can capture yet
+        # Becomes True permanently once they have deployed 3 pieces from bench
+        self.can_capture = {
+            'W': False,
+            'B': False
+        }
+        self.pieces_deployed = {
+            'W': 0,
+            'B': 0
+        }
+        self.deployed_pieces = {
+            'W': [],
+            'B': []
+        }
+
         # GAME STATE FLAGS
         self.initialize_bench_flag = True
         self.clear_board_flag = False
@@ -262,6 +277,34 @@ class Board:
                     if btn_rect.collidepoint(event.pos):
                         waiting = False
 
+    def draw_capture_tracker(self, display):
+        pip_size = 40
+        pip_gap = 6
+        pad = 10
+        total_w = 3 * pip_size + 2 * pip_gap
+        bg_color = (55, 57, 70)
+        empty_color = (130, 130, 140)
+        locked_border = (100, 100, 110)
+        unlocked_border = (255, 215, 0)
+
+        for color in ('W', 'B'):
+            start_x = pad if color == 'W' else self.width - pad - total_w
+            border_color = unlocked_border if self.can_capture[color] else locked_border
+
+            for i in range(3):
+                slot_x = start_x + i * (pip_size + pip_gap)
+                slot_rect = pygame.Rect(slot_x, pad, pip_size, pip_size)
+                pygame.draw.rect(display, bg_color, slot_rect, border_radius=4)
+                pygame.draw.rect(display, border_color, slot_rect, 2, border_radius=4)
+
+                if i < len(self.deployed_pieces[color]):
+                    scaled = pygame.transform.smoothscale(
+                        self.deployed_pieces[color][i].img, (pip_size, pip_size)
+                    )
+                    display.blit(scaled, slot_rect.topleft)
+                else:
+                    pygame.draw.circle(display, empty_color, slot_rect.center, pip_size // 4, 2)
+
     def reset(self):
         self.pieces = []
         self.board_space = np.zeros((4, 4))
@@ -269,6 +312,9 @@ class Board:
         self.turn = 'W'
         for square in self.squares:
             square.occupying_piece = None
+        self.can_capture = {'W': False, 'B': False}
+        self.pieces_deployed = {'W': 0, 'B': 0}
+        self.deployed_pieces = {'W': [], 'B': []}
         self.clear_board_flag = False
         self.game_over_flag = False
         self.initialize_bench_flag = True

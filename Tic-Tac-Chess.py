@@ -49,13 +49,15 @@ if __name__ == "__main__":
         # Runs once at game_onset to fill both benches
         if board.initialize_bench_flag:
             board.initialize_bench(board, left_bench, right_bench, display)
+            board.draw_capture_tracker(display)
             pygame.display.update()
             board.initialize_bench_flag = False
-        
+
         # Clears board and redraws all pieces whenever a piece has moved
         if board.clear_board_flag:
             draw_clear_board(display)
             board.draw_pieces(display)
+            board.draw_capture_tracker(display)
             pygame.display.update()
             board.clear_board_flag = False
 
