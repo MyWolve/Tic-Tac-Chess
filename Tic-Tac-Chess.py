@@ -1,26 +1,3 @@
-'''
-Docstring for Tic-Tac-Chess
-
-This project is inspired by this video on the Connect 4 state space (https://www.youtube.com/watch?v=i9pBeuBeupY&t=501s)
-The idea being that we can calculate and visualize 'weak' and 'strong' solutions to this game. 
-
-Tic-Tac-Chess is a small, modified, combination of both Tic-Tac-Toe and Chess and often referred to as "Tic-Tac-Chec" (https://www.bing.com/videos/riverview/relatedvideo?q=tic-tac-chess&mid=9325761329D683062C2B9325761329D683062C2B&FORM=VIRE)
-
-The game is played on a 4x4 checkered board between 2 players: alternating turns between moves. 
-Each player has 4 unique pieces:
-    - Pawn
-    - Bishop
-    - Rook
-    - Knight
-which move exactly as they do in Chess. Except, the pawn reverses direction when it reaches the other side of the board. 
-
-A player may either play (place on the board) an unplaced piece on any empty square on the board **or** move one of their pieces already on the board on their turn. But a player may only move a piece once they have
-atleast 3 of their own pieces on the board.
-
-Captured pieces are removed from the board and may be played on subsequent turns to any empty square on the board. 
-
-The goal of Tic-Tac-Chess is to lay out your pieces so that they form 4 pieces in a row, column, or diagonal, just like in Tic-Tac-Toe. 
-'''
 import pygame
 
 from data.classes.Board import Board
@@ -28,6 +5,8 @@ from data.classes.Board import Board
 # pygame setup
 pygame.init()
 
+# The dimensions are still relatively hard-coded because of how Square offsets are calculated in Board and Square.py
+# Modify with EXTREME caution
 WINDOW_SIZE = (1280, 720)
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
@@ -53,7 +32,7 @@ if __name__ == "__main__":
             pygame.display.update()
             board.initialize_bench_flag = False
 
-        # Clears board and redraws all pieces whenever a piece has moved
+        # Redraws all pieces whenever a piece has moved; also checks for winner.
         if board.clear_board_flag:
             draw_clear_board(display)
             board.draw_pieces(display)
@@ -66,10 +45,6 @@ if __name__ == "__main__":
                 board.reset()
                 draw_clear_board(display)
 
-        # Congratulates the winner and resets the game! (maybe it keeps track too)
-        if board.game_over_flag:
-            pass
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -81,8 +56,10 @@ if __name__ == "__main__":
                     if board.selected_piece:
                         p = board.selected_piece
                         board.selected_piece = None
-                        is_board_square = selected_square is not None and not selected_square.startswith("bench")
+                        is_board_square = selected_square is not None and not selected_square.startswith("bench") # Need to check for bench because they're not actually saved as "Square" objects
                         is_valid = is_board_square and (p.on_bench or selected_square in p.valid_moves)
+
+                        # If the move is not valid (get rid of highlights), or the move action is successful (move pieces), we need to redraw the board. 
                         if not is_valid or p.move(board, selected_square):
                             board.clear_board_flag = True
                     else:
@@ -90,6 +67,8 @@ if __name__ == "__main__":
                         if board.selected_piece:
                             board.highlight_square(display)
                             pygame.display.update()
+
+                # Store the board_state in a 4x4 matrix in Board.py
                 board.update_board_space()
                         
 pygame.quit()

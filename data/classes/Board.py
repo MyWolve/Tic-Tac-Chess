@@ -1,4 +1,5 @@
 import pygame 
+import numpy as np
 
 from .Square import Square
 from .pieces.Piece import Piece
@@ -6,8 +7,6 @@ from .pieces.Pawn import Pawn
 from .pieces.Rook import Rook
 from .pieces.Knight import Knight
 from .pieces.Bishop import Bishop
-
-import numpy as np
 
 class Board:
     def __init__(self, width, height):
@@ -35,10 +34,10 @@ class Board:
         self.right_bench_x = self.offset_x + board_pixel_w + bench_gap
         self.bench_y = self.offset_y  # align top of bench with top of board
         
-        # I'm confusing myself, I'm not sure if this is even needed -- Surely an easier way? 
+        # I'm not sure if this is even needed -- Surely an easier way? 
         self.squares = self.generate_squares()
         
-        # List points to each Piece() object created so we can manipulate them
+        # DEBUG: List points to each Piece() object created so we can manipulate them 
         self.pieces = []
 
         # Saves board space to matrix to check for winners
@@ -118,10 +117,8 @@ class Board:
 
         # Add pieces to global inventory
         self.pieces.extend([W_Pawn, W_Rook, W_Knight, W_Bishop, B_Pawn, B_Rook, B_Knight, B_Bishop])
-
-        # self.draw_piece_test_fillBoard(display, board)
-        # self.draw_piece_test_fillBoard_NEW(display, board)
     
+    # "Reading the Card, explains the Card" - MLK
     def draw_pieces(self, display):
         for piece in self.pieces:
             piece.draw(display,self)
