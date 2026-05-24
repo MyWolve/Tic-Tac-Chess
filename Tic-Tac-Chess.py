@@ -59,6 +59,10 @@ if __name__ == "__main__":
             pygame.display.update()
             board.clear_board_flag = False
 
+        # Congratulates the winner and resets the game! (maybe it keeps track too)
+        if board.game_over_flag:
+            pass
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -79,5 +83,11 @@ if __name__ == "__main__":
                         if board.selected_piece:
                             board.highlight_square(display)
                             pygame.display.update()
+                board.update_board_space()
+                winner = board.check_winner()
+                if winner:
+                    board.display_winner(winner, display)
+                    board.reset()
+                    draw_clear_board(display)
                         
 pygame.quit()

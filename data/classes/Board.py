@@ -7,6 +7,8 @@ from .pieces.Rook import Rook
 from .pieces.Knight import Knight
 from .pieces.Bishop import Bishop
 
+import numpy as np
+
 class Board:
     def __init__(self, width, height):
         self.width = width
@@ -35,13 +37,18 @@ class Board:
         
         # I'm confusing myself, I'm not sure if this is even needed -- Surely an easier way? 
         self.squares = self.generate_squares()
+        
         # List points to each Piece() object created so we can manipulate them
         self.pieces = []
+
+        # Saves board space to matrix to check for winners
+        self.board_space = np.zeros((4,4))
 
         # GAME STATE FLAGS
         self.initialize_bench_flag = True
         self.clear_board_flag = False
         self.redraw_board_flag = False
+        self.game_over_flag = False
 
     def generate_squares(self):
         output = []
@@ -201,3 +208,67 @@ class Board:
                     continue
                 highlight_square_rect = pygame.Rect(coords[0], coords[1], self.tile_size, self.tile_size)
                 pygame.draw.rect(display, (215, 10, 245), highlight_square_rect, 3)
+    
+    def update_board_space(self):
+        for square in self.squares:
+            grid_pos_x = ord(square.pos[0]) - ord('A')
+            grid_pos_y = int(square.pos[1]) - 1
+            if square.occupying_piece:    
+                self.board_space[grid_pos_y][grid_pos_x] = 1 if square.occupying_piece.COLOR == 'W' else 2
+            else:
+                self.board_space[grid_pos_y][grid_pos_x] = 0
+
+    def check_winner(self):
+        print(self.board_space)
+        b = self.board_space
+        for player in (1,2):
+            for i in range(4):
+                if np.all(b[i, :] == player) or np.all(b[:, i] == player):
+                    return player
+            if np.all(np.diag(b) == player) or np.all(np.diag(np.fliplr(b)) == player):
+                return player
+        return None
+
+    def display_winner(self, winner, display):
+        color_name = "White" if winner == 1 else "Black"
+        print("Congratulations! %s is the winner!" % color_name)
+
+        overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        display.blit(overlay, (0, 0))
+
+        font_large = pygame.font.SysFont(None, 80)
+        font_btn = pygame.font.SysFont(None, 48)
+
+        title_surf = font_large.render(f"{color_name} Wins!", True, (255, 215, 0))
+        title_rect = title_surf.get_rect(center=(self.width // 2, self.height // 2 - 60))
+        display.blit(title_surf, title_rect)
+
+        btn_rect = pygame.Rect(0, 0, 220, 60)
+        btn_rect.center = (self.width // 2, self.height // 2 + 60)
+        pygame.draw.rect(display, (70, 130, 180), btn_rect, border_radius=10)
+        btn_surf = font_btn.render("Continue", True, (255, 255, 255))
+        display.blit(btn_surf, btn_surf.get_rect(center=btn_rect.center))
+
+        pygame.display.update()
+
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    raise SystemExit
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if btn_rect.collidepoint(event.pos):
+                        waiting = False
+
+    def reset(self):
+        self.pieces = []
+        self.board_space = np.zeros((4, 4))
+        self.selected_piece = None
+        self.turn = 'W'
+        for square in self.squares:
+            square.occupying_piece = None
+        self.clear_board_flag = False
+        self.game_over_flag = False
+        self.initialize_bench_flag = True
