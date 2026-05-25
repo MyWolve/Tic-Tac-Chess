@@ -1,31 +1,70 @@
 # Tic-Tac-Chess
 
-This project is inspired by this video on the Connect 4 state space (https://www.youtube.com/watch?v=i9pBeuBeupY&t=501s).
+Inspired by [this video on the Connect 4 state space](https://www.youtube.com/watch?v=i9pBeuBeupY&t=501s) — and its [follow-up where he solves it](https://youtu.be/KaljD3Q3ct0?si=PEDpWkrTm9bgnV5n) — the goal of this project is to calculate and visualize the weak and strong solutions to Tic-Tac-Chess, a compact chess/Tic-Tac-Toe hybrid sometimes called ["Tic-Tac-Chec"](https://www.bing.com/videos/riverview/relatedvideo?q=tic-tac-chess&mid=9325761329D683062C2B9325761329D683062C2B&FORM=VIRE).
 
-Update: He's solved it! (https://youtu.be/KaljD3Q3ct0?si=PEDpWkrTm9bgnV5n).
+The smaller board and restricted piece set make this a more tractable state space to enumerate than standard chess, while the hybrid rules introduce enough complexity to make the solution non-trivial.
 
-The idea being that we can calculate and visualize 'weak' and 'strong' solutions to this game. 
+---
 
-Tic-Tac-Chess is a small, modified, combination of both Tic-Tac-Toe and Chess and often referred to as "Tic-Tac-Chec" (https://www.bing.com/videos/riverview/relatedvideo?q=tic-tac-chess&mid=9325761329D683062C2B9325761329D683062C2B&FORM=VIRE)
+## The Game
 
-The game is played on a 4x4 checkered board between 2 players: alternating turns between moves. 
-Each player has 4 unique pieces:
-    - Pawn
-    - Bishop
-    - Rook
-    - Knight
-which move exactly as they do in Chess. Except, the pawn reverses direction when it reaches the other side of the board. 
+Tic-Tac-Chess is played on a 4×4 checkered board between two players, alternating turns.
 
-A player may either play (place on the board) an unplaced piece on any empty square on the board **or** move one of their pieces already on the board on their turn. But a player may only move a piece once they have
-atleast 3 of their own pieces on the board.
+Each player has 4 pieces — a **Pawn**, **Bishop**, **Rook**, and **Knight** — held on a bench beside the board at the start of the game. Pieces move exactly as they do in chess, with one exception: **Pawns reverse direction when they reach the far edge of the board** rather than promoting.
 
-Captured pieces are removed from the board and may be played on subsequent turns to any empty square on the board. 
+**Turn structure:**
+- On your turn you may either deploy an unplaced piece from your bench to any empty square, or move a piece already on the board.
 
-The goal of Tic-Tac-Chess is to lay out your pieces so that they form 4 pieces in a row, column, or diagonal, just like in Tic-Tac-Toe. 
+**Captures:**
+- Capturing is only enabled once you have **deployed at least 3 pieces**.
+- A captured piece is returned to its owner's bench and may be placed on an empty square on a future turn.
 
-CREDITS:
-Thank you to DANI MACCARI (@danimaccari - https://dani-maccari.itch.io/) for creating the pixel-art chess pieces used in this program. All rights belong to them and their license continues in this product. 
+**Winning:**
+- Place 4 of your pieces in a row, column, or diagonal — just like Tic-Tac-Toe or Connect 4.
 
-COMPONENT PROGRESS:
-*  ***Main game functionality*** :)
-* Solution Graph
+**Rules:**
+- There are various implementations of these rules online; some with interesting features. For example, some rules allow En-Passent captures as in Chess or permit Pawns to move 2 squares on their first move. While these are not implemented in this version, I may add them as optional rules in the future. Feel free to fork this repo and try implementing these kinds of changes. 
+---
+
+## What's Built
+
+- **Playable game** — full pygame implementation with board, benches, piece movement, and capture logic.
+- **Move history logging** — each game is recorded to `data/history/` in a compact notation format (see below). A new file is created per game session.
+
+### Move Notation
+
+One move per line. Format: `[color][*bench][piece][x capture][destination]`
+
+| Token | Meaning |
+|---|---|
+| `W` / `B` | White or Black |
+| `*` | Deployed from bench |
+| `P` `R` `K` `B` | Pawn, Rook, Knight, Bishop |
+| `x` | Captured a piece |
+| `A1`–`D4` | Destination square |
+
+Example game excerpt:
+```
+W*PA1
+B*RD4
+W*KB2
+B*BC3
+WPA2
+BRD3
+WKxC3
+```
+
+---
+
+## Roadmap
+
+- [ ] Solution graph — enumerate the full game state space
+- [ ] Weak solution — determine whether the first or second player wins with optimal play
+- [ ] Strong solution — compute optimal play from any reachable position
+- [ ] Visualization — render the state space graph
+
+---
+
+## Credits
+
+Pixel-art chess pieces by [Dani Maccari (@danimaccari)](https://dani-maccari.itch.io/). All rights belong to them; their license carries forward in this project.
