@@ -8,7 +8,7 @@ class Piece:
         self.bench_pos = pos
         self.img = pygame.image.load("data/imgs/W_Queen.png")
 
-        # Will implement function later
+        # Stores list of valid destinations as grid_square names
         self.valid_moves: list[str] = []
 
 
@@ -25,7 +25,8 @@ class Piece:
             if not dest_square:
                 return 1
             
-            if dest_square.occupying_piece and not self.on_bench:
+            is_capture = bool(dest_square.occupying_piece and not self.on_bench)
+            if is_capture:
                 self.capture(dest_square)
 
             coords = board.get_coords(destination_square)
@@ -41,6 +42,8 @@ class Piece:
             self.pos = coords
             self.on_bench = False
             dest_square.occupying_piece = self
+
+            board.record_move(self, destination_square, is_capture, deploying_from_bench)
 
             if deploying_from_bench:
                 board.pieces_deployed[self.COLOR] += 1

@@ -1,5 +1,7 @@
-import pygame 
+import pygame
 import numpy as np
+import os
+from datetime import datetime
 
 from .Square import Square
 from .pieces.Piece import Piece
@@ -7,6 +9,13 @@ from .pieces.Pawn import Pawn
 from .pieces.Rook import Rook
 from .pieces.Knight import Knight
 from .pieces.Bishop import Bishop
+
+_PIECE_LETTERS = {
+    'Pawn': 'P',
+    'Rook': 'R',
+    'Knight': 'K',
+    'Bishop': 'B',
+}
 
 class Board:
     def __init__(self, width, height):
@@ -57,6 +66,10 @@ class Board:
             'W': [],
             'B': []
         }
+
+        # History file for this game session
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.history_file = os.path.join("data", "history", f"game_{timestamp}.txt")
 
         # GAME STATE FLAGS
         self.initialize_bench_flag = True
@@ -139,7 +152,7 @@ class Board:
                 W_Pawn = Pawn((coords[0], coords[1]), "W", board)
                 Pawn.draw(W_Pawn, display, board)
 
-    # Get hard-coded coordinate for each grid-square.
+    # Get hard-coded coordinate for each grid-square. (Name -> Coords)
     """
     |A1|B1|C1|D1|
     |A2|B2|C2|D2|
@@ -159,6 +172,7 @@ class Board:
         except KeyError:
             print("ERROR: Grid square must be a valid move. ([A-D][1-4])")
     
+    # Reverses the above function (Coords -> Name)
     def get_grid_name(self, coords):
         coordinates = {
             "A1": (352,72), "A2": (352,216), "A3": (352,360), "A4": (352,504),
@@ -196,6 +210,7 @@ class Board:
                 return f"right_bench_{i}"
         return None
     
+    # Highlights square of selected piece and all valid moves from that pieces location.
     def highlight_square(self, display):
         p = self.selected_piece
         if not p:
@@ -221,6 +236,7 @@ class Board:
                 highlight_square_rect = pygame.Rect(coords[0], coords[1], self.tile_size, self.tile_size)
                 pygame.draw.rect(display, (215, 10, 245), highlight_square_rect, 3)
     
+    # Update board_space matrix with board state
     def update_board_space(self):
         for square in self.squares:
             grid_pos_x = ord(square.pos[0]) - ord('A')
@@ -230,6 +246,7 @@ class Board:
             else:
                 self.board_space[grid_pos_y][grid_pos_x] = 0
 
+    # "Explaining the Card, Reads the Card" ~ Socrates
     def check_winner(self):
         print(self.board_space)
         b = self.board_space
@@ -274,6 +291,7 @@ class Board:
                     if btn_rect.collidepoint(event.pos):
                         waiting = False
 
+    # Draws the tracker which determines whether players can capture yet or not 
     def draw_capture_tracker(self, display):
         pip_size = 40
         pip_gap = 6
@@ -302,6 +320,18 @@ class Board:
                 else:
                     pygame.draw.circle(display, empty_color, slot_rect.center, pip_size // 4, 2)
 
+    def record_move(self, piece, destination, is_capture, from_bench):
+        letter = _PIECE_LETTERS.get(type(piece).__name__, '?')
+        token = piece.COLOR
+        if from_bench:
+            token += '*'
+        token += letter
+        if is_capture:
+            token += 'x'
+        token += destination
+        with open(self.history_file, 'a') as f:
+            f.write(token + '\n')
+
     def reset(self):
         self.pieces = []
         self.board_space = np.zeros((4, 4))
@@ -315,3 +345,7 @@ class Board:
         self.clear_board_flag = False
         self.game_over_flag = False
         self.initialize_bench_flag = True
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.history_file = os.path.join("data", "history", f"game_{timestamp}.txt")
+    
+    
