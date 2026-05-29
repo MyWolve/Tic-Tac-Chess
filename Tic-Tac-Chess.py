@@ -8,7 +8,7 @@ pygame.init()
 # The dimensions are still relatively hard-coded because of how Square offsets are calculated in Board and Square.py
 # Modify with EXTREME caution
 WINDOW_SIZE = (1280, 720)
-screen = pygame.display.set_mode(WINDOW_SIZE)
+screen = pygame.display.set_mode(WINDOW_SIZE, pygame.RESIZABLE)
 
 board = Board(WINDOW_SIZE[0], WINDOW_SIZE[1])
 
@@ -48,6 +48,14 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.WINDOWRESIZED:
+                screen = pygame.display.get_surface()
+                board.resize(screen.get_width(), screen.get_height())
+                left_bench, right_bench, display = draw_clear_board(screen)
+                if not board.initialize_bench_flag:
+                    board.draw_pieces(display)
+                    board.draw_capture_tracker(display)
+                    pygame.display.update()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: # Left mouse button
                     mouse_pos = pygame.mouse.get_pos()

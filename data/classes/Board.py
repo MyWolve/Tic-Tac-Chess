@@ -152,36 +152,31 @@ class Board:
                 W_Pawn = Pawn((coords[0], coords[1]), "W", board)
                 Pawn.draw(W_Pawn, display, board)
 
-    # Get hard-coded coordinate for each grid-square. (Name -> Coords)
+    # Get coordinate for each grid-square. (Name -> Coords)
     """
     |A1|B1|C1|D1|
     |A2|B2|C2|D2|
     |A3|B3|C3|D3|
     |A4|B4|C4|D4|
     """
-    # Can DEFINITELY refactor this later for dynamic board sizes
     def get_coords(self, gridSquare):
-        coordinates = {
-            "A1": (352,72), "A2": (352,216), "A3": (352,360), "A4": (352,504),
-            "B1": (496,72), "B2": (496,216), "B3": (496,360), "B4": (496,504),
-            "C1": (640,72), "C2": (640,216), "C3": (640,360), "C4": (640,504),
-            "D1": (784,72), "D2": (784,216), "D3": (784,360), "D4": (784,504)
-        }
         try:
-            return coordinates[gridSquare][0], coordinates[gridSquare][1]        
-        except KeyError:
+            col = ord(gridSquare[0]) - ord('A')
+            row = int(gridSquare[1]) - 1
+            if not (0 <= col < 4 and 0 <= row < 4):
+                raise ValueError
+            return (self.offset_x + col * self.tile_size,
+                    self.offset_y + row * self.tile_size)
+        except (IndexError, ValueError):
             print("ERROR: Grid square must be a valid move. ([A-D][1-4])")
-    
+
     # Reverses the above function (Coords -> Name)
     def get_grid_name(self, coords):
-        coordinates = {
-            "A1": (352,72), "A2": (352,216), "A3": (352,360), "A4": (352,504),
-            "B1": (496,72), "B2": (496,216), "B3": (496,360), "B4": (496,504),
-            "C1": (640,72), "C2": (640,216), "C3": (640,360), "C4": (640,504),
-            "D1": (784,72), "D2": (784,216), "D3": (784,360), "D4": (784,504)
-        }
-        reverse = {v: k for k, v in coordinates.items()}
-        return reverse.get(coords)
+        col = (coords[0] - self.offset_x) // self.tile_size
+        row = (coords[1] - self.offset_y) // self.tile_size
+        if 0 <= col < 4 and 0 <= row < 4:
+            return 'ABCD'[col] + str(row + 1)
+        return None
     
     # Returns the Piece object at a location given by mouse_pos
     def get_piece_at(self, mouse_pos):
@@ -331,6 +326,53 @@ class Board:
         token += destination
         with open(self.history_file, 'a') as f:
             f.write(token + '\n')
+
+    def resize(self, new_width, new_height):
+        old_tile_size = self.tile_size
+        old_left_bench_x = self.left_bench_x
+        old_right_bench_x = self.right_bench_x
+        old_bench_y = self.bench_y
+
+        # Snapshot square occupancy before regenerating squares
+        occupancy = {s.pos: s.occupying_piece for s in self.squares}
+
+        # Recompute layout
+        self.width = new_width
+        self.height = new_height
+        self.tile_size = int(new_height * 0.8) // 4
+        self.tile_width = self.tile_size
+        self.tile_height = self.tile_size
+        board_pixel_w = self.tile_size * 4
+        board_pixel_h = self.tile_size * 4
+        self.offset_x = (new_width - board_pixel_w) // 2
+        self.offset_y = (new_height - board_pixel_h) // 2
+
+        bench_gap = 50
+        self.bench_slot_size = self.tile_size
+        self.left_bench_x = self.offset_x - self.bench_slot_size - bench_gap
+        self.right_bench_x = self.offset_x + board_pixel_w + bench_gap
+        self.bench_y = self.offset_y
+
+        # Regenerate squares and restore occupancy
+        self.squares = self.generate_squares()
+        for square in self.squares:
+            square.occupying_piece = occupancy.get(square.pos)
+
+        # Remap all piece positions to the new layout
+        for piece in self.pieces:
+            # Infer which bench slot this piece belongs to from its old bench_pos
+            slot_index = round((piece.bench_pos[1] - old_bench_y) / old_tile_size) if old_tile_size > 0 else 0
+            is_left = abs(piece.bench_pos[0] - old_left_bench_x) <= abs(piece.bench_pos[0] - old_right_bench_x)
+            new_bench_x = self.left_bench_x if is_left else self.right_bench_x
+            piece.bench_pos = (new_bench_x, self.bench_y + slot_index * self.tile_size)
+
+            if piece.on_bench:
+                piece.pos = piece.bench_pos
+            else:
+                for square in self.squares:
+                    if square.occupying_piece is piece:
+                        piece.pos = self.get_coords(square.pos)
+                        break
 
     def reset(self):
         self.pieces = []
