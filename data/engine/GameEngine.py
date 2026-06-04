@@ -95,9 +95,31 @@ class GameEngine:
         def _pawn_moves(board, turn, can_capture, p_reverse):
             p_val = 1 if turn == 0 else 5
             for square in board:
+                # If Pawn is on the board
                 if square == p_val:
                     print("I'm a Pawn, and I'm on the board! (A4)")
-                    return [self.PAWN * 16 + 1]
+                    # Logic will Pawn's will go here
+
+                    # If p_reverse == 0: (Pawn moves forward)
+                        # Next square empty?
+                            # Yes - Go ahead
+                        # No - Not a valid move
+                        # Anyone on the diagonals?
+                            # Yes - can_capture?
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # No - Not a valid move
+                    # else: (Pawn moves backwards)
+                        # Next square empty?
+                            # Yes - Go ahead
+                        # No - Not a valid move
+                        # Anyone on the diagonals?
+                            # Yes - can_capture?
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # No - Not a valid move
+
+                    return [self.PAWN * 16 + 1] # Temporary return statement
             # Piece is on bench
             return [ self.PAWN * 16 + i for i, square in enumerate(board) if square == 0]
 
