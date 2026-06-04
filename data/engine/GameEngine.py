@@ -1,5 +1,3 @@
-import numpy as np
-
 class GameEngine:
     """
     Standard RL environment interface:
@@ -8,16 +6,20 @@ class GameEngine:
         legal_actions        = engine.get_legal_actions()
 
     State vector (length 29, we can initialize it Sv_0 = [0_0, 0_1, 0_2, ..., 1_25]):
-        [0:15]  board   — 0=empty, 1-4=W piece by type, 5-8=B piece by type
-        [16:23] bench   — binary flags (0=on_bench), W pieces [0:4] then B pieces [4:8]
+        [0:16]  board   — 0=empty, 1-4=W piece by type, 5-8=B piece by type
+        [16:24] bench   — binary flags (0=on_bench), W pieces [0:4] then B pieces [4:8]
         [24]    turn    — 0=W, 1=B
-        [25:26] capture — binary, [W_can_capture, B_can_capture]
-        [27:28] pawn    — binary, [W_reverse, B_reverse]
+        [25:27] capture — binary, [W_can_capture, B_can_capture]
+        [27:29] pawn    — binary, [W_reverse, B_reverse]
 
     Action encoding:
         action = piece_type * 16 + dest_row * 4 + dest_col
         piece_type: 0=Pawn, 1=Rook, 2=Knight, 3=Bishop
     """
+
+    # Piece value for action encoding
+    PAWN, ROOK, KNIGHT, BISHOP = 0, 1, 2, 3
+
     W, B = 0, 1
     STATE_SIZE = 29
 
@@ -92,16 +94,38 @@ class GameEngine:
         
         def _pawn_moves(board, turn, can_capture, p_reverse):
             p_val = 1 if turn == 0 else 5
+            for square in board:
+                if square == p_val:
+                    print("I'm a Pawn, and I'm on the board! (A4)")
+                    return [self.PAWN * 16 + 1]
+            # Piece is on bench
+            return [ self.PAWN * 16 + i for i, square in enumerate(board) if square == 0]
 
         def _rook_moves(board, turn, can_capture):
             p_val = 2 if turn == 0 else 6
+            for square in board:
+                if square == p_val:
+                    pass
+            # Piece is on bench
+            return [self.ROOK * 16 + i for i, square in enumerate(board) if square == 0]
 
         def _knight_moves(board, turn, can_capture):
             p_val = 3 if turn == 0 else 7
-
+            for square in board:
+                if square == p_val:
+                    pass
+            # Piece is on bench
+            return [self.KNIGHT * 16 + i for i, square in enumerate(board) if square == 0]
+        
         def _bishop_moves(board, turn, can_capture):
             p_val = 4 if turn == 0 else 8
+            for square in board:
+                if square == p_val:
+                    pass
+            # Piece is on bench        
+            return [self.BISHOP * 16 + i for i, square in enumerate(board) if square == 0]
 
+        
         legal_moves = []
         legal_moves += _pawn_moves(board, turn, can_capture, p_reverse) or []
         legal_moves += _rook_moves(board, turn, can_capture) or []
