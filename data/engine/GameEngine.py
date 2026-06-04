@@ -8,20 +8,17 @@ class GameEngine:
         legal_actions        = engine.get_legal_actions()
 
     State vector (length 29, we can initialize it Sv_0 = [0_0, 0_1, 0_2, ..., 1_25]):
-        [0:16]  board   — 0=empty, 1-4=W piece by type, 5-8=B piece by type
-        [16:24] bench   — binary flags (0=on_bench), W pieces [0:4] then B pieces [4:8]
+        [0:15]  board   — 0=empty, 1-4=W piece by type, 5-8=B piece by type
+        [16:23] bench   — binary flags (0=on_bench), W pieces [0:4] then B pieces [4:8]
         [24]    turn    — 0=W, 1=B
-        [25:27] capture — binary, [W_can_capture, B_can_capture]
-        [27:29] pawn    — binary, [W_reverse, B_reverse]
+        [25:26] capture — binary, [W_can_capture, B_can_capture]
+        [27:28] pawn    — binary, [W_reverse, B_reverse]
 
     Action encoding:
         action = piece_type * 16 + dest_row * 4 + dest_col
         piece_type: 0=Pawn, 1=Rook, 2=Knight, 3=Bishop
     """
-
-    PAWN, ROOK, KNIGHT, BISHOP = 0, 1, 2, 3
-    W, B = 0, 1    
-
+    W, B = 0, 1
     STATE_SIZE = 29
 
     def reset(self):
@@ -35,7 +32,7 @@ class GameEngine:
         # piece_pos[player][piece_type] = (col, row) when on board, else None
         self.piece_pos = [[None] * 4, [None] * 4]
 
-        self.turn             = self.W
+        self.turn             = 0
         self.pieces_deployed  = [0, 0]
         self.can_capture      = [0, 0]
 
@@ -75,17 +72,50 @@ class GameEngine:
             int(self.pawn_reverse[self.B])
         ]
 
-        return np.array(board_enc + bench_enc + turn + capture + reverse, dtype=np.float32)
+        return board_enc + bench_enc + turn + capture + reverse
     
     def step(self, action):
+        """
+        Implements the action, steps the world forward a time step, and returns:
+            @sv - updated world state
+            @reward - reward earned (+1, 0)
+            @done - is the game over?
+        """
         pass
+
+    def get_legal_actions(self, state):
+        """Return legal actions given a board state"""
+        board = state[:16]
+        turn = int(state[24])
+        can_capture = state[25:27]
+        p_reverse = state[27:29]
+        
+        def _pawn_moves(board, turn, can_capture, p_reverse):
+            p_val = 1 if turn == 0 else 5
+
+        def _rook_moves(board, turn, can_capture):
+            p_val = 2 if turn == 0 else 6
+
+        def _knight_moves(board, turn, can_capture):
+            p_val = 3 if turn == 0 else 7
+
+        def _bishop_moves(board, turn, can_capture):
+            p_val = 4 if turn == 0 else 8
+
+        legal_moves = []
+        legal_moves += _pawn_moves(board, turn, can_capture, p_reverse) or []
+        legal_moves += _rook_moves(board, turn, can_capture) or []
+        legal_moves += _knight_moves(board, turn, can_capture) or []
+        legal_moves += _bishop_moves(board, turn, can_capture) or []
+
+        return legal_moves
 
     def sv_to_matrix(self):
         """From the state vector, get a matrix visualization"""
         sv = self.get_state()
         #sv = [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         board = sv[:16]
-        matrix = np.array(board).reshape(4,4)
+        matrix = "\n".join(str(board[i*4:(i+1)*4]) for i in range(4))
         return matrix
 
 

@@ -6,3 +6,5 @@ if __name__ == "__main__":
     print(state)
     matrix = engine.sv_to_matrix()
     print(matrix)
+    legal_moves = engine.get_legal_actions(state)
+    print(legal_moves)
