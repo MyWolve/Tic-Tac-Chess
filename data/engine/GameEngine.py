@@ -94,40 +94,117 @@ class GameEngine:
         
         def _pawn_moves(board, turn, can_capture, p_reverse):
             p_val = 1 if turn == 0 else 5
-            for square in board:
+            valid_moves = []
+
+            for i, square in enumerate(board):
                 # If Pawn is on the board
                 if square == p_val:
                     print("I'm a Pawn, and I'm on the board! (A4)")
-                    # Logic will Pawn's will go here
-
                     # If p_reverse == 0: (Pawn moves forward)
+                    if p_reverse[turn] == 0:
                         # Next square empty?
-                            # Yes - Go ahead
-                        # No - Not a valid move
-                        # Anyone on the diagonals?
-                            # Yes - can_capture?
+                        try: 
+                            if board[i + 1] == 0:
                                 # Yes - Go ahead
-                            # No - Not a valid move
-                        # No - Not a valid move
-                    # else: (Pawn moves backwards)
-                        # Next square empty?
-                            # Yes - Go ahead
-                        # No - Not a valid move
-                        # Anyone on the diagonals?
-                            # Yes - can_capture?
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # No - Not a valid move
+                                valid_moves.append(self.PAWN * 16 + i + 1)
+                        except IndexError:
+                            continue
 
-                    return [self.PAWN * 16 + 1] # Temporary return statement
-            # Piece is on bench
-            return [ self.PAWN * 16 + i for i, square in enumerate(board) if square == 0]
+                        # Anyone on the diagonal -> top-right
+                        try:
+                            if board[i - 3] and board[i - 3] != 0:
+                                # If pawn is white
+                                if p_val == 1:
+                                    # If piece is black -> top-right
+                                    if board[i-3] in range(5,9):
+                                        if can_capture[turn]:   
+                                            valid_moves.append(self.PAWN * 16 + i - 3)
+                        except IndexError:
+                            continue
+                        
+                        # Anyone on the diagonal -> bottom-right
+                        try:
+                            if board[i + 5] and board[i + 5] != 0:
+                                # If piece is black -> bottom-right
+                                if board[i+5] in range(5,9):
+                                    if can_capture[turn]:
+                                        valid_moves.append(self.PAWN * 16 + i + 5)
+                        except IndexError:
+                            continue
+
+                    # reverse == 1
+                    elif p_reverse[turn] == 1:
+
+                        # Next square empty?
+                        try:
+                            if board[i-1] == 0:
+                                valid_moves.append(self.PAWN * 16 + i - 1)
+                        except IndexError:
+                            continue
+                        
+                        # Anyone on the diagonal? top-left
+                        try:
+                            if board[i - 5] and board[i - 5] != 0:
+                                # If piece is white -> top-left
+                                if board[i-5] in range(1,5):
+                                    if can_capture[turn]:
+                                        valid_moves.append(self.PAWN * 16 + i - 5)
+                        except IndexError:
+                            continue
+                        
+                        # Anyone on the diagonal? bottom-left
+                        try:
+                            if board[i + 3] and board[i + 3] != 0:
+                            # If piece is white -> bottom-left
+                                if board[i+3] in range(1,5):
+                                    if can_capture[turn]:
+                                        valid_moves.append(self.PAWN * 16 + i + 3)
+                        except IndexError:
+                            continue
+                        
+            if p_val in board:
+                return valid_moves
+            else:
+                return [self.PAWN * 16 + i for i, sq in enumerate(board) if sq == 0]
+
 
         def _rook_moves(board, turn, can_capture):
             p_val = 2 if turn == 0 else 6
             for square in board:
                 if square == p_val:
                     pass
+                    # While squares to check:
+                        # While square to the left:
+                            # Is square empty?
+                                    # Yes - Go ahead
+                                # No - Not a valid move
+                            # Can capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # While square to the right:
+                             # Is square empty?
+                                    # Yes - Go ahead
+                                # No - Not a valid move
+                            # Can capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # While square to the top:
+                             # Is square empty?
+                                    # Yes - Go ahead
+                                # No - Not a valid move
+                            # Can capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # While square to the bottom:
+                             # Is square empty?
+                                    # Yes - Go ahead
+                                # No - Not a valid move
+                            # Can capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+
+                    return None # Temporary test return
+
             # Piece is on bench
             return [self.ROOK * 16 + i for i, square in enumerate(board) if square == 0]
 
@@ -136,6 +213,58 @@ class GameEngine:
             for square in board:
                 if square == p_val:
                     pass
+                    # While squares to check:
+                        # If square to the right-up:
+                            # Is empty?:
+                                # Yes - Go ahead
+                            # can_capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # elif square to the right-down:
+                            # Is empty?:
+                                # Yes - Go ahead
+                            # can_capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # elif squares to the bottom-left:
+                            # Is empty?:
+                                # Yes - Go ahead
+                            # can_capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # elif squares to the bottom-right:
+                        # Is empty?:
+                            # Yes - Go ahead
+                        # can_capture?:
+                            # Yes - Go ahead
+                        # No - Not a valid move
+                        # elif square to the left-up:
+                            # Is empty?:
+                                # Yes - Go ahead
+                            # can_capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # elif square to the left-down:
+                            # Is empty?:
+                                # Yes - Go ahead
+                            # can_capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                         # elif square to the top-left:
+                            # Is empty?:
+                                # Yes - Go ahead
+                            # can_capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                             # elif square to the top-right:
+                            # Is empty?:
+                                # Yes - Go ahead
+                            # can_capture?:
+                                # Yes - Go ahead
+                            # No - Not a valid move
+
+                    return None # Temporary return statement
+                
             # Piece is on bench
             return [self.KNIGHT * 16 + i for i, square in enumerate(board) if square == 0]
         
@@ -144,23 +273,52 @@ class GameEngine:
             for square in board:
                 if square == p_val:
                     pass
+                    # While squares to check:
+                        # If squares to the top-right:
+                            # is empty?
+                                # Yes- Go ahead
+                            # can_capture?
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # elif squares to the top-left:
+                            # is empty?
+                                # Yes- Go ahead
+                            # can_capture?
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # elif squares to the bottom-right:
+                            # is empty?
+                                # Yes- Go ahead
+                            # can_capture?
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                        # elif squares to the bottom-left:
+                            # is empty?
+                                # Yes- Go ahead
+                            # can_capture?
+                                # Yes - Go ahead
+                            # No - Not a valid move
+                    
+                    return None # Temporary return statement
+                
             # Piece is on bench        
             return [self.BISHOP * 16 + i for i, square in enumerate(board) if square == 0]
 
         
         legal_moves = []
-        legal_moves += _pawn_moves(board, turn, can_capture, p_reverse) or []
-        legal_moves += _rook_moves(board, turn, can_capture) or []
-        legal_moves += _knight_moves(board, turn, can_capture) or []
-        legal_moves += _bishop_moves(board, turn, can_capture) or []
+        legal_moves += _pawn_moves(board, turn, can_capture, p_reverse) or [] # [0,15]
+        legal_moves += _rook_moves(board, turn, can_capture) or []            # [16,31]
+        legal_moves += _knight_moves(board, turn, can_capture) or []          # [32,47]
+        legal_moves += _bishop_moves(board, turn, can_capture) or []          # [48,63]
 
         return legal_moves
 
-    def sv_to_matrix(self):
+    def sv_to_matrix(self, state_vector=None):
         """From the state vector, get a matrix visualization"""
-        sv = self.get_state()
+        if state_vector is None:
+            state_vector = self.get_state()
         #sv = [0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        board = sv[:16]
+        board = state_vector[:16]
         matrix = "\n".join(str(board[i*4:(i+1)*4]) for i in range(4))
         return matrix
 
