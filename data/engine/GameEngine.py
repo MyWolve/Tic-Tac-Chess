@@ -225,27 +225,13 @@ class GameEngine:
                                 
                             # Is target in the same column?
                             if i % 4 == j % 4:
-                                # Is target above?
+                                # Is target above? Collect only — resolved after j-loop.
                                 if j < i:
-                                    # Is target non-empty square?
                                     if target_square != 0:
-                                        # Is target the closest target?
-                                        block_candidate.append(j)
-                                        if first_target_up:
-                                            # Update blocker
-                                            first_target_up = False
-
-                                            # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
-                                                # Can capture?:
-                                                if can_capture[turn]:
-                                                    # Yes - Go ahead
-                                                    valid_moves.append(self.ROOK * 16 + j)
+                                        block_candidate.append((j, True))
                                     else:
                                         # Has a piece been encountered in this direction?
-                                        if first_target_up:
-                                            # No -- Go ahead
-                                            valid_moves.append(self.ROOK * 16 + j)
+                                        block_candidate.append((j, False))
 
                                 # Is target below?
                                 if j > i:
@@ -266,6 +252,19 @@ class GameEngine:
                                         if first_target_down:
                                             # No -- Go ahead
                                             valid_moves.append(self.ROOK * 16 + j)
+
+                    # Resolve up: j-loop is done, block_candidate is complete.
+                    # reversed() gives closest blocker first (highest index = nearest rook).
+                    for c, flag in reversed(block_candidate):
+                        if flag:
+                            if first_target_up:
+                                first_target_up = False
+                                if board[c] in range(5,9) if turn == 0 else range(1,5):
+                                    if can_capture[turn]:
+                                        valid_moves.append(self.ROOK * 16 + c)
+                        else:
+                            if first_target_up:
+                                valid_moves.append(self.ROOK * 16 + c)
 
             if p_val in board:
                 return valid_moves
@@ -377,7 +376,7 @@ class GameEngine:
         legal_moves += _knight_moves(board, turn, can_capture) or []          # [32,47]
         legal_moves += _bishop_moves(board, turn, can_capture) or []          # [48,63]
 
-        return legal_moves
+        return sorted(legal_moves)
 
     def sv_to_matrix(self, state_vector=None):
         """From the state vector, get a matrix visualization"""
