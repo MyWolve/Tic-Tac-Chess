@@ -2,3 +2,15 @@
 pixel_chess_v1.2/
 __pycache__/
 data/history/
+
+# IDE
+.vscode/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Type checking
+.mypy_cache/

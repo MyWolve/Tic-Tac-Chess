@@ -169,102 +169,79 @@ class GameEngine:
 
         def _rook_moves(board, turn, can_capture):
             p_val = 2 if turn == 0 else 6
+            enemy = range(5,9) if turn == 0 else range(1,5)
             valid_moves = []
-            block_candidate = []
             first_target_left = True
             first_target_right = True
             first_target_up = True
             first_target_down = True
             for i, square in enumerate(board):
                 if square == p_val:
-                    # While squares to check:
-                    for j, target_square in enumerate(board):
-                        # Square != Target_Square
-                        if i != j:
-                            # Is target in the same row?
-                            if i // 4 == j // 4:
-                                # Is target to the left?
-                                if j < i:
-                                    # Is target non-empty square?
-                                    if target_square != 0:
-                                        if first_target_left:
-                                            # Update blocker
-                                            first_target_left = False
+                    # Check to the left:
+                    for target_index in range(i-1, -1, -1):
+                        # Is target in same row?
+                        if target_index // 4 == i // 4:
+                            # Is target non-empty?
+                            if board[target_index] != 0:
+                                if first_target_left:
+                                    first_target_left = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        # Can capture?
+                                        if can_capture[turn]:
+                                            valid_moves.append(self.ROOK * 16 + target_index)
+                            else:
+                                # Has a piece been encountered yet in this row?
+                                if first_target_left: # No 
+                                    valid_moves.append(self.ROOK * 16 + target_index)
+                        # Is target in same column?
+                        elif target_index % 4 == i % 4:
+                            # Is target non-empty?
+                            if board[target_index] != 0:
+                                if first_target_up:
+                                    first_target_up = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        # Can capture?
+                                        if can_capture[turn]:
+                                                valid_moves.append(self.ROOK * 16 + target_index)
+                            else:
+                                # Has a piece been encountered yet in this column?
+                                if first_target_up:
+                                    valid_moves.append(self.ROOK * 16 + target_index)
 
-                                            # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
-                                                # Can capture?:
-                                                if can_capture[turn]:
-                                                    # Yes - Go ahead
-                                                    valid_moves.append(self.ROOK * 16 + j)
-                                    else:
-                                        # Has a piece been encountered in this direction?
-                                        if first_target_left:
-                                            # No -- Go ahead
-                                            valid_moves.append(self.ROOK * 16 + j)
-
-                                # Is target to the right?
-                                if j > i:
-                                    # Is target non-empty square?
-                                    if target_square != 0:
-                                        if first_target_right:
-                                            # Update blocker
-                                            first_target_right = False
-
-                                            # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
-                                                # Can capture?:
-                                                if can_capture[turn]:
-                                                    # Yes - Go ahead
-                                                    valid_moves.append(self.ROOK * 16 + j)
-                                    else:
-                                        # Has a piece been encountered in this direction?
-                                        if first_target_right:
-                                            # No -- Go ahead
-                                            valid_moves.append(self.ROOK * 16 + j)
-                                
-                            # Is target in the same column?
-                            if i % 4 == j % 4:
-                                # Is target above? Collect only — resolved after j-loop.
-                                if j < i:
-                                    if target_square != 0:
-                                        block_candidate.append((j, True))
-                                    else:
-                                        # Has a piece been encountered in this direction?
-                                        block_candidate.append((j, False))
-
-                                # Is target below?
-                                if j > i:
-                                    # Is target non-empty square?
-                                    if target_square != 0:
-                                        if first_target_down:
-                                            # Update blocker
-                                            first_target_down = False
-
-                                            # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
-                                                # Can capture?:
-                                                if can_capture[turn]:
-                                                    # Yes - Go ahead
-                                                    valid_moves.append(self.ROOK * 16 + j)
-                                    else:
-                                        # Has a piece been encountered in this direction?
-                                        if first_target_down:
-                                            # No -- Go ahead
-                                            valid_moves.append(self.ROOK * 16 + j)
-
-                    # Resolve up: j-loop is done, block_candidate is complete.
-                    # reversed() gives closest blocker first (highest index = nearest rook).
-                    for c, flag in reversed(block_candidate):
-                        if flag:
-                            if first_target_up:
-                                first_target_up = False
-                                if board[c] in range(5,9) if turn == 0 else range(1,5):
-                                    if can_capture[turn]:
-                                        valid_moves.append(self.ROOK * 16 + c)
-                        else:
-                            if first_target_up:
-                                valid_moves.append(self.ROOK * 16 + c)
+                    # Check to the right:
+                    for target_index in range(i+1, 16, 1):
+                        # Is target in same row?
+                        if target_index // 4 == i // 4:
+                            # Is target non-empty?
+                            if board[target_index] != 0:
+                                if first_target_right:
+                                    first_target_right = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        # Can capture?
+                                        if can_capture[turn]:
+                                            valid_moves.append(self.ROOK * 16 + target_index)
+                            else:
+                                # Has a piece been encountered yet in this row?
+                                if first_target_right: # No 
+                                    valid_moves.append(self.ROOK * 16 + target_index)
+                        # Is target in same column?
+                        elif target_index % 4 == i % 4:
+                            # Is target non-empty?
+                            if board[target_index] != 0:
+                                if first_target_down:
+                                    first_target_down = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        # Can capture?
+                                        if can_capture[turn]:
+                                            valid_moves.append(self.ROOK * 16 + target_index)
+                            else:
+                                # Has a piece been encountered yet in this column?
+                                if first_target_down: # No
+                                    valid_moves.append(self.ROOK * 16 + target_index)
 
             if p_val in board:
                 return valid_moves
