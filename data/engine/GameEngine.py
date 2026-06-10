@@ -192,7 +192,7 @@ class GameEngine:
                                             first_target_left = False
 
                                             # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
                                                 # Can capture?:
                                                 if can_capture[turn]:
                                                     # Yes - Go ahead
@@ -212,7 +212,7 @@ class GameEngine:
                                             first_target_right = False
 
                                             # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
                                                 # Can capture?:
                                                 if can_capture[turn]:
                                                     # Yes - Go ahead
@@ -236,7 +236,7 @@ class GameEngine:
                                             first_target_up = False
 
                                             # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
                                                 # Can capture?:
                                                 if can_capture[turn]:
                                                     # Yes - Go ahead
@@ -256,7 +256,7 @@ class GameEngine:
                                             first_target_down = False
 
                                             # Is target valid?
-                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                            if target_square in range(5,9) if turn == 0 else range(1,5):  
                                                 # Can capture?:
                                                 if can_capture[turn]:
                                                     # Yes - Go ahead
