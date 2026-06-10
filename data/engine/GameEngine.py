@@ -169,44 +169,103 @@ class GameEngine:
 
         def _rook_moves(board, turn, can_capture):
             p_val = 2 if turn == 0 else 6
-            enemy = range(5, 9) if turn == 0 else range(1, 5)
             valid_moves = []
-
+            block_candidate = []
+            first_target_left = True
+            first_target_right = True
+            first_target_up = True
+            first_target_down = True
             for i, square in enumerate(board):
                 if square == p_val:
-                    row_start = (i // 4) * 4
+                    # While squares to check:
+                    for j, target_square in enumerate(board):
+                        # Square != Target_Square
+                        if i != j:
+                            # Is target in the same row?
+                            if i // 4 == j // 4:
+                                # Is target to the left?
+                                if j < i:
+                                    # Is target non-empty square?
+                                    if target_square != 0:
+                                        if first_target_left:
+                                            # Update blocker
+                                            first_target_left = False
 
-                    # Left: nearest to farthest
-                    for j in range(i - 1, row_start - 1, -1):
-                        if board[j] != 0:
-                            if board[j] in enemy and can_capture[turn]:
-                                valid_moves.append(self.ROOK * 16 + j)
-                            break
-                        valid_moves.append(self.ROOK * 16 + j)
+                                            # Is target valid?
+                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                                # Can capture?:
+                                                if can_capture[turn]:
+                                                    # Yes - Go ahead
+                                                    valid_moves.append(self.ROOK * 16 + j)
+                                    else:
+                                        # Has a piece been encountered in this direction?
+                                        if first_target_left:
+                                            # No -- Go ahead
+                                            valid_moves.append(self.ROOK * 16 + j)
 
-                    # Right: nearest to farthest
-                    for j in range(i + 1, row_start + 4):
-                        if board[j] != 0:
-                            if board[j] in enemy and can_capture[turn]:
-                                valid_moves.append(self.ROOK * 16 + j)
-                            break
-                        valid_moves.append(self.ROOK * 16 + j)
+                                # Is target to the right?
+                                if j > i:
+                                    # Is target non-empty square?
+                                    if target_square != 0:
+                                        if first_target_right:
+                                            # Update blocker
+                                            first_target_right = False
 
-                    # Up: nearest to farthest
-                    for j in range(i - 4, -1, -4):
-                        if board[j] != 0:
-                            if board[j] in enemy and can_capture[turn]:
-                                valid_moves.append(self.ROOK * 16 + j)
-                            break
-                        valid_moves.append(self.ROOK * 16 + j)
+                                            # Is target valid?
+                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                                # Can capture?:
+                                                if can_capture[turn]:
+                                                    # Yes - Go ahead
+                                                    valid_moves.append(self.ROOK * 16 + j)
+                                    else:
+                                        # Has a piece been encountered in this direction?
+                                        if first_target_right:
+                                            # No -- Go ahead
+                                            valid_moves.append(self.ROOK * 16 + j)
+                                
+                            # Is target in the same column?
+                            if i % 4 == j % 4:
+                                # Is target above?
+                                if j < i:
+                                    # Is target non-empty square?
+                                    if target_square != 0:
+                                        # Is target the closest target?
+                                        block_candidate.append(j)
+                                        if first_target_up:
+                                            # Update blocker
+                                            first_target_up = False
 
-                    # Down: nearest to farthest
-                    for j in range(i + 4, 16, 4):
-                        if board[j] != 0:
-                            if board[j] in enemy and can_capture[turn]:
-                                valid_moves.append(self.ROOK * 16 + j)
-                            break
-                        valid_moves.append(self.ROOK * 16 + j)
+                                            # Is target valid?
+                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                                # Can capture?:
+                                                if can_capture[turn]:
+                                                    # Yes - Go ahead
+                                                    valid_moves.append(self.ROOK * 16 + j)
+                                    else:
+                                        # Has a piece been encountered in this direction?
+                                        if first_target_up:
+                                            # No -- Go ahead
+                                            valid_moves.append(self.ROOK * 16 + j)
+
+                                # Is target below?
+                                if j > i:
+                                    # Is target non-empty square?
+                                    if target_square != 0:
+                                        if first_target_down:
+                                            # Update blocker
+                                            first_target_down = False
+
+                                            # Is target valid?
+                                            if target_square in range(5,9) if turn == 0 else range(1,4):  
+                                                # Can capture?:
+                                                if can_capture[turn]:
+                                                    # Yes - Go ahead
+                                                    valid_moves.append(self.ROOK * 16 + j)
+                                    else:
+                                        # Has a piece been encountered in this direction?
+                                        if first_target_down:
+                                            # No -- Go ahead
+                                            valid_moves.append(self.ROOK * 16 + j)
 
             if p_val in board:
                 return valid_moves
