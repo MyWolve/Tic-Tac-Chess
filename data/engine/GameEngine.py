@@ -99,7 +99,6 @@ class GameEngine:
             for i, square in enumerate(board):
                 # If Pawn is on the board
                 if square == p_val:
-                    print("I'm a Pawn, and I'm on the board! (A4)")
                     # If p_reverse == 0: (Pawn moves forward)
                     if p_reverse[turn] == 0:
                         # Next square empty?
@@ -116,7 +115,7 @@ class GameEngine:
                                 # If pawn is white
                                 if p_val == 1:
                                     # If piece is black -> top-right
-                                    if board[i-3] in range(5,9):
+                                    if board[i-3] in range(5,9) if turn == 0 else range(1,5):
                                         if can_capture[turn]:   
                                             valid_moves.append(self.PAWN * 16 + i - 3)
                         except IndexError:
@@ -126,7 +125,7 @@ class GameEngine:
                         try:
                             if board[i + 5] and board[i + 5] != 0:
                                 # If piece is black -> bottom-right
-                                if board[i+5] in range(5,9):
+                                if board[i+5] in range(5,9) if turn == 0 else range(1,5):
                                     if can_capture[turn]:
                                         valid_moves.append(self.PAWN * 16 + i + 5)
                         except IndexError:
@@ -146,7 +145,7 @@ class GameEngine:
                         try:
                             if board[i - 5] and board[i - 5] != 0:
                                 # If piece is white -> top-left
-                                if board[i-5] in range(1,5):
+                                if board[i-5] in range(1,5) if turn == 1 else range(5,9):
                                     if can_capture[turn]:
                                         valid_moves.append(self.PAWN * 16 + i - 5)
                         except IndexError:
@@ -156,7 +155,7 @@ class GameEngine:
                         try:
                             if board[i + 3] and board[i + 3] != 0:
                             # If piece is white -> bottom-left
-                                if board[i+3] in range(1,5):
+                                if board[i+3] in range(1,5) if turn == 1 else range(5,9):
                                     if can_capture[turn]:
                                         valid_moves.append(self.PAWN * 16 + i + 3)
                         except IndexError:
@@ -170,43 +169,51 @@ class GameEngine:
 
         def _rook_moves(board, turn, can_capture):
             p_val = 2 if turn == 0 else 6
-            for square in board:
+            enemy = range(5, 9) if turn == 0 else range(1, 5)
+            valid_moves = []
+
+            for i, square in enumerate(board):
                 if square == p_val:
-                    pass
-                    # While squares to check:
-                        # While square to the left:
-                            # Is square empty?
-                                    # Yes - Go ahead
-                                # No - Not a valid move
-                            # Can capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # While square to the right:
-                             # Is square empty?
-                                    # Yes - Go ahead
-                                # No - Not a valid move
-                            # Can capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # While square to the top:
-                             # Is square empty?
-                                    # Yes - Go ahead
-                                # No - Not a valid move
-                            # Can capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # While square to the bottom:
-                             # Is square empty?
-                                    # Yes - Go ahead
-                                # No - Not a valid move
-                            # Can capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
+                    row_start = (i // 4) * 4
 
-                    return None # Temporary test return
+                    # Left: nearest to farthest
+                    for j in range(i - 1, row_start - 1, -1):
+                        if board[j] != 0:
+                            if board[j] in enemy and can_capture[turn]:
+                                valid_moves.append(self.ROOK * 16 + j)
+                            break
+                        valid_moves.append(self.ROOK * 16 + j)
 
+                    # Right: nearest to farthest
+                    for j in range(i + 1, row_start + 4):
+                        if board[j] != 0:
+                            if board[j] in enemy and can_capture[turn]:
+                                valid_moves.append(self.ROOK * 16 + j)
+                            break
+                        valid_moves.append(self.ROOK * 16 + j)
+
+                    # Up: nearest to farthest
+                    for j in range(i - 4, -1, -4):
+                        if board[j] != 0:
+                            if board[j] in enemy and can_capture[turn]:
+                                valid_moves.append(self.ROOK * 16 + j)
+                            break
+                        valid_moves.append(self.ROOK * 16 + j)
+
+                    # Down: nearest to farthest
+                    for j in range(i + 4, 16, 4):
+                        if board[j] != 0:
+                            if board[j] in enemy and can_capture[turn]:
+                                valid_moves.append(self.ROOK * 16 + j)
+                            break
+                        valid_moves.append(self.ROOK * 16 + j)
+
+            if p_val in board:
+                return valid_moves
             # Piece is on bench
-            return [self.ROOK * 16 + i for i, square in enumerate(board) if square == 0]
+            else:
+                return [self.ROOK * 16 + i for i, sq in enumerate(board) if sq == 0]
+
 
         def _knight_moves(board, turn, can_capture):
             p_val = 3 if turn == 0 else 7
