@@ -70,6 +70,35 @@ class TestGameEngine(unittest.TestCase):
         legal = self.engine.get_legal_actions(state)
         expected_game_state = [1, 5, 17, 21, 25, 28, 30, 31, 32, 34, 35, 37, 39, 40, 41, 42, 43, 44, 46, 47, 48, 50, 51, 53, 55, 56, 57, 58, 59, 60, 62, 63]
         self.assertEqual(expected_game_state, legal)
+    
+    def test_get_legal_actions_bishop(self):
+        state = [0,0,1,5, 0,0,4,0, 0,0,0,0, 8,0,0,0, 
+                 1,0,0,1, 1,0,0,1,
+                 0,
+                 0,0,
+                 0,1]
+        legal = self.engine.get_legal_actions(state)
+        expected_game_state = [16, 17, 20, 21, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 36, 37, 39, 40, 41, 42, 43, 45, 46, 47, 49, 57, 59]
+        self.assertEqual(expected_game_state, legal)
+    
+    def test_get_legal_actions_bishop_capture(self):
+        state = [0,0,1,5, 0,0,4,0, 0,0,0,0, 8,0,0,0, 
+                 1,0,0,1, 1,0,0,1,
+                 0,
+                 1,0,
+                 0,1]
+        legal = self.engine.get_legal_actions(state)
+        expected_game_state = [16, 17, 20, 21, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 36, 37, 39, 40, 41, 42, 43, 45, 46, 47, 49, 51, 57, 59, 60]
+        self.assertEqual(expected_game_state, legal)
+    
+    def test_bishop_no_row_wrap(self):
+        state = [0,0,1,5, 0,0,0,4, 0,0,0,0, 8,0,0,0,
+                 1,0,0,1, 1,0,0,1,
+                 0,
+                 0,0,
+                 0,1]
+        legal = self.engine.get_legal_actions(state)
+        self.assertNotIn(GameEngine.BISHOP * 16 + 4, legal)
 
 if __name__ == "__main__":
     unittest.main()
