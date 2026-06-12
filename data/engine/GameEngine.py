@@ -91,11 +91,12 @@ class GameEngine:
         turn = int(state[24])
         can_capture = state[25:27]
         p_reverse = state[27:29]
+
+        enemy = range(5,9) if turn == 0 else range(1,5)
         
         def _pawn_moves(board, turn, can_capture, p_reverse):
             p_val = 1 if turn == 0 else 5
             valid_moves = []
-
             for i, square in enumerate(board):
                 # If Pawn is on the board
                 if square == p_val:
@@ -115,7 +116,7 @@ class GameEngine:
                                 # If pawn is white
                                 if p_val == 1:
                                     # If piece is black -> top-right
-                                    if board[i-3] in range(5,9) if turn == 0 else range(1,5):
+                                    if board[i-3] in enemy:
                                         if can_capture[turn]:   
                                             valid_moves.append(self.PAWN * 16 + i - 3)
                         except IndexError:
@@ -125,7 +126,7 @@ class GameEngine:
                         try:
                             if board[i + 5] and board[i + 5] != 0:
                                 # If piece is black -> bottom-right
-                                if board[i+5] in range(5,9) if turn == 0 else range(1,5):
+                                if board[i+5] in enemy:
                                     if can_capture[turn]:
                                         valid_moves.append(self.PAWN * 16 + i + 5)
                         except IndexError:
@@ -145,7 +146,7 @@ class GameEngine:
                         try:
                             if board[i - 5] and board[i - 5] != 0:
                                 # If piece is white -> top-left
-                                if board[i-5] in range(1,5) if turn == 1 else range(5,9):
+                                if board[i-5] in enemy:
                                     if can_capture[turn]:
                                         valid_moves.append(self.PAWN * 16 + i - 5)
                         except IndexError:
@@ -155,7 +156,7 @@ class GameEngine:
                         try:
                             if board[i + 3] and board[i + 3] != 0:
                             # If piece is white -> bottom-left
-                                if board[i+3] in range(1,5) if turn == 1 else range(5,9):
+                                if board[i+3] in enemy:
                                     if can_capture[turn]:
                                         valid_moves.append(self.PAWN * 16 + i + 3)
                         except IndexError:
@@ -169,12 +170,12 @@ class GameEngine:
 
         def _rook_moves(board, turn, can_capture):
             p_val = 2 if turn == 0 else 6
-            enemy = range(5,9) if turn == 0 else range(1,5)
             valid_moves = []
             first_target_left = True
             first_target_right = True
             first_target_up = True
             first_target_down = True
+
             for i, square in enumerate(board):
                 if square == p_val:
                     # Check to the left:
@@ -183,6 +184,7 @@ class GameEngine:
                         if target_index // 4 == i // 4:
                             # Is target non-empty?
                             if board[target_index] != 0:
+                                # Is this the first piece encountered? (Accounts for friendly and enemy)
                                 if first_target_left:
                                     first_target_left = False
                                     # Is target valid?
@@ -198,6 +200,7 @@ class GameEngine:
                         elif target_index % 4 == i % 4:
                             # Is target non-empty?
                             if board[target_index] != 0:
+                                # First piece encountered?
                                 if first_target_up:
                                     first_target_up = False
                                     # Is target valid?
@@ -216,6 +219,7 @@ class GameEngine:
                         if target_index // 4 == i // 4:
                             # Is target non-empty?
                             if board[target_index] != 0:
+                                # First piece encountered?
                                 if first_target_right:
                                     first_target_right = False
                                     # Is target valid?
@@ -231,6 +235,7 @@ class GameEngine:
                         elif target_index % 4 == i % 4:
                             # Is target non-empty?
                             if board[target_index] != 0:
+                                # First piece encountered?
                                 if first_target_down:
                                     first_target_down = False
                                     # Is target valid?
@@ -252,58 +257,17 @@ class GameEngine:
 
         def _knight_moves(board, turn, can_capture):
             p_val = 3 if turn == 0 else 7
-            for square in board:
+            valid_moves = []
+
+            for i, square in enumerate(board):
                 if square == p_val:
-                    pass
-                    # While squares to check:
-                        # If square to the right-up:
-                            # Is empty?:
-                                # Yes - Go ahead
-                            # can_capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # elif square to the right-down:
-                            # Is empty?:
-                                # Yes - Go ahead
-                            # can_capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # elif squares to the bottom-left:
-                            # Is empty?:
-                                # Yes - Go ahead
-                            # can_capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # elif squares to the bottom-right:
-                        # Is empty?:
-                            # Yes - Go ahead
-                        # can_capture?:
-                            # Yes - Go ahead
-                        # No - Not a valid move
-                        # elif square to the left-up:
-                            # Is empty?:
-                                # Yes - Go ahead
-                            # can_capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # elif square to the left-down:
-                            # Is empty?:
-                                # Yes - Go ahead
-                            # can_capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                         # elif square to the top-left:
-                            # Is empty?:
-                                # Yes - Go ahead
-                            # can_capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                             # elif square to the top-right:
-                            # Is empty?:
-                                # Yes - Go ahead
-                            # can_capture?:
-                                # Yes - Go ahead
-                            # No - Not a valid move
+                    # Check to the left
+                    for target_index in range(i-1, -1, -1):
+                        pass
+                    
+                    # Check to the right
+                    for target_index in range(i+1, 16, 1):
+                        pass
 
                     return None # Temporary return statement
                 
@@ -312,39 +276,78 @@ class GameEngine:
         
         def _bishop_moves(board, turn, can_capture):
             p_val = 4 if turn == 0 else 8
-            for square in board:
+            valid_moves = []
+            first_target_top_left = True
+            first_target_top_right = True
+            first_target_bottom_left = True
+            first_target_bottom_right = True
+
+            for i, square in enumerate(board):
                 if square == p_val:
-                    pass
-                    # While squares to check:
-                        # If squares to the top-right:
-                            # is empty?
-                                # Yes- Go ahead
-                            # can_capture?
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # elif squares to the top-left:
-                            # is empty?
-                                # Yes- Go ahead
-                            # can_capture?
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # elif squares to the bottom-right:
-                            # is empty?
-                                # Yes- Go ahead
-                            # can_capture?
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                        # elif squares to the bottom-left:
-                            # is empty?
-                                # Yes- Go ahead
-                            # can_capture?
-                                # Yes - Go ahead
-                            # No - Not a valid move
-                    
-                    return None # Temporary return statement
-                
-            # Piece is on bench        
-            return [self.BISHOP * 16 + i for i, square in enumerate(board) if square == 0]
+                    # Check to the left
+                    for target_index in range(i-1, -1, -1):
+                        # Top-left corner
+                        if abs(i-target_index) % 5 == 0:
+                            if board[target_index] != 0:
+                                if first_target_top_left:
+                                    first_target_top_left = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        if can_capture[turn]:
+                                            valid_moves.append(self.BISHOP * 16 + target_index)
+                                
+                            else:
+                                if first_target_top_left:
+                                    valid_moves.append(self.BISHOP * 16 + target_index)
+
+                        # Top-right corner
+                        elif abs(i-target_index) % 3 == 0:
+                            if board[target_index] != 0:
+                                if first_target_top_right:
+                                    first_target_top_right = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        if can_capture[turn]:
+                                            valid_moves.append(self.BISHOP * 16 + target_index)
+                            else:
+                                if first_target_top_right:
+                                    valid_moves.append(self.BISHOP * 16 + target_index)
+
+                    # Check to the right
+                    for target_index in range(i+1, 16, 1):
+                        # Bottom-left corner
+                        if abs(target_index-i) % 3 == 0:
+                            if board[target_index] != 0:
+                                if first_target_bottom_left:
+                                    first_target_bottom_left = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        if can_capture[turn]:
+                                            valid_moves.append(self.BISHOP * 16 + target_index)
+                                
+                            else:
+                                if first_target_bottom_left:
+                                    valid_moves.append(self.BISHOP * 16 + target_index)
+
+                        # Bottom-right corner
+                        elif abs(target_index-i) % 5 == 0:
+                            if board[target_index] != 0:
+                                if first_target_bottom_right:
+                                    first_target_bottom_right = False
+                                    # Is target valid?
+                                    if board[target_index] in enemy:
+                                        if can_capture[turn]:
+                                            valid_moves.append(self.BISHOP * 16 + target_index)
+                                
+                            else:
+                                if first_target_bottom_right:
+                                    valid_moves.append(self.BISHOP * 16 + target_index)
+                            
+            if p_val in board:
+                return valid_moves
+            else:                
+                # Piece is on bench        
+                return [self.BISHOP * 16 + i for i, square in enumerate(board) if square == 0]
 
         
         legal_moves = []
