@@ -261,15 +261,21 @@ class GameEngine:
 
             for i, square in enumerate(board):
                 if square == p_val:
-                    # Check to the left
-                    for target_index in range(i-1, -1, -1):
-                        pass
-                    
-                    # Check to the right
-                    for target_index in range(i+1, 16, 1):
-                        pass
+                    for target_index in range(0, 16, 1):
+                        row_diff = abs(target_index // 4 - i // 4)
+                        col_diff = abs(target_index % 4 - i % 4)
+                        if row_diff * col_diff == 2:
+                            if board[target_index] != 0:
+                                if board[target_index] in enemy:
+                                    if can_capture[turn]:
+                                        valid_moves.append(self.KNIGHT * 16 + target_index)
+                            else:
+                                valid_moves.append(self.KNIGHT * 16 + target_index)
 
-                    return None # Temporary return statement
+            if p_val in board:
+                return valid_moves
+            else:
+                return [self.KNIGHT * 16 + i for i, sq in enumerate(board) if sq == 0]
                 
             # Piece is on bench
             return [self.KNIGHT * 16 + i for i, square in enumerate(board) if square == 0]
