@@ -287,7 +287,7 @@ class GameEngine:
                     # Check to the left
                     for target_index in range(i-1, -1, -1):
                         # Top-left corner
-                        if abs(i-target_index) % 5 == 0:
+                        if target_index % 4 - target_index // 4 == i % 4 - i // 4:
                             if board[target_index] != 0:
                                 if first_target_top_left:
                                     first_target_top_left = False
@@ -301,7 +301,7 @@ class GameEngine:
                                     valid_moves.append(self.BISHOP * 16 + target_index)
 
                         # Top-right corner
-                        elif abs(i-target_index) % 3 == 0:
+                        elif target_index % 4 + target_index // 4 == i % 4 + i // 4:
                             if board[target_index] != 0:
                                 if first_target_top_right:
                                     first_target_top_right = False
@@ -316,7 +316,7 @@ class GameEngine:
                     # Check to the right
                     for target_index in range(i+1, 16, 1):
                         # Bottom-left corner
-                        if abs(target_index-i) % 3 == 0:
+                        if target_index % 4 + target_index // 4 == i % 4 + i // 4:
                             if board[target_index] != 0:
                                 if first_target_bottom_left:
                                     first_target_bottom_left = False
@@ -330,7 +330,7 @@ class GameEngine:
                                     valid_moves.append(self.BISHOP * 16 + target_index)
 
                         # Bottom-right corner
-                        elif abs(target_index-i) % 5 == 0:
+                        elif target_index % 4 - target_index // 4 == i % 4 - i // 4:
                             if board[target_index] != 0:
                                 if first_target_bottom_right:
                                     first_target_bottom_right = False
