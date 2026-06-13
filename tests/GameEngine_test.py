@@ -99,6 +99,16 @@ class TestGameEngine(unittest.TestCase):
                  0,1]
         legal = self.engine.get_legal_actions(state)
         self.assertNotIn(GameEngine.BISHOP * 16 + 4, legal)
+    
+    def test_knight(self):
+        state = [0,0,0,3, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+                 0,0,1,0, 0,0,0,0,
+                 0,
+                 0,0,
+                 0,1]
+        legal = self.engine.get_legal_actions(state)
+        expected_game_state = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 37, 42, 48, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+        self.assertEqual(expected_game_state, legal)
 
 if __name__ == "__main__":
     unittest.main()
