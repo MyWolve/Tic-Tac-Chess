@@ -50,7 +50,7 @@ class Board:
         self.pieces = []
 
         # Saves board space to matrix to check for winners
-        self.board_space = np.zeros((4,4))
+        self.board_space = np.zeros((4,4), dtype=np.int8)
 
         # Tracks whether or not players can capture yet
         # Becomes True permanently once they have deployed 3 pieces from bench
