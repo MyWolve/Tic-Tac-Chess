@@ -172,6 +172,6 @@ if __name__ == "__main__":
     print(f"  two lines (bad) {len(two):>12,}")
 
     print("\nexample won board:")
-    print(won[0], "  winner:", winner(won[0]))
+    print(won[0], "  winner:", winner(won[7]))
     print("\nexample two-line board:")
-    print(two[0], "  winner:", winner(two[0]))
+    print(two[0], "  winner:", winner(two[2]))
