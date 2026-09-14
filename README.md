@@ -8,16 +8,17 @@ The smaller board and restricted piece set make this a more tractable state spac
 
 ## The Game
 
-Tic-Tac-Chess is played on a 4×4 checkered board between two players, alternating turns.
+Tic-Tac-Chess is played on a 4×4 checkered board between two players, alternating turns: white goes first.
 
 Each player has 4 pieces — a **Pawn**, **Bishop**, **Rook**, and **Knight** — held on a bench beside the board at the start of the game. Pieces move exactly as they do in chess, with one exception: **Pawns reverse direction when they reach the far edge of the board** rather than promoting.
 
 **Turn structure:**
-- On your turn you may either deploy an unplaced piece from your bench to any empty square, or move a piece already on the board.
+- On your turn you may either deploy an unplaced piece from your bench to any **empty square**, or move a piece already on the board.
 
 **Captures:**
 - Capturing is only enabled once you have **deployed at least 3 pieces**.
 - A captured piece is returned to its owner's bench and may be placed on an empty square on a future turn.
+- Once capturing has been enabled for a player, you may capture **at any time during your turn**. You do **not** need to have 3 or more pieces on the board.
 
 **Winning:**
 - Place 4 of your pieces in a row, column, or diagonal — just like Tic-Tac-Toe or Connect 4.
